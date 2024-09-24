@@ -1,18 +1,11 @@
 import React from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
-
+import { Tabs } from "expo-router";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
-
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+import TabIconHome from "@/assets/images/TabIconHome";
+import TabIconQuestions from "@/assets/images/TabIconQuestions";
+import TabAccountIcon from "@/assets/images/TabIconAccount";
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -27,36 +20,30 @@ export default function TabLayout() {
       <Tabs.Screen
         name="home"
         options={{
+          tabBarIcon: TabIconHome,
           title: "Home",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? "light"].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
         }}
       />
       <Tabs.Screen
         name="questions"
         options={{
           title: "Questions",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: TabIconQuestions,
+          headerShown: false,
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="account"
         options={{
           title: "Account",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: TabAccountIcon,
+        }}
+      />
+      <Tabs.Screen
+        name="accountSettings"
+        options={{
+          title: "Account Settings",
+          tabBarButton: () => null,
         }}
       />
     </Tabs>
