@@ -1,14 +1,7 @@
 import { FC, useState } from "react";
-import {
-  TouchableOpacity,
-  View,
-  Text,
-  StyleSheet,
-  Modal,
-  FlatList,
-} from "react-native";
+import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { Colors } from "@/types/Colors";
-
+import AntDesign from "@expo/vector-icons/AntDesign";
 interface CustomSelectProps {
   options: string[];
   value: string;
@@ -22,50 +15,43 @@ const CustomSelect: FC<CustomSelectProps> = ({
   onValueChange,
   placeholder,
 }) => {
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isDropdownVisible, setDropdownVisible] = useState(false);
 
   return (
     <View style={styles.container}>
       <TouchableOpacity
-        onPress={() => setModalVisible(true)}
+        onPress={() => setDropdownVisible(!isDropdownVisible)}
         style={styles.input}
       >
-        <Text>{value || placeholder || "Select an option"}</Text>
+        <Text style={styles.placeholderText}>
+          {value || placeholder || "Select an option"}
+        </Text>
+        <AntDesign name="down" size={14} color={Colors.DarkBlue} />
       </TouchableOpacity>
 
-      <Modal
-        visible={isModalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <FlatList
-              data={options}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    onValueChange(item);
-                    setModalVisible(false);
-                  }}
-                  style={styles.option}
-                >
-                  <Text>{item}</Text>
-                </TouchableOpacity>
-              )}
-            />
-          </View>
+      {isDropdownVisible && (
+        <View style={styles.dropdown}>
+          {options.map((item) => (
+            <TouchableOpacity
+              key={item}
+              onPress={() => {
+                onValueChange(item);
+                setDropdownVisible(false);
+              }}
+              style={styles.option}
+            >
+              <Text>{item}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
-      </Modal>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    width: "100%",
   },
   input: {
     padding: 16,
@@ -73,18 +59,23 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     borderColor: "#F8F6FF",
     borderWidth: 1,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.5)",
   },
-  modalContent: {
-    width: 300,
+  placeholderText: {
+    color: "#888",
+  },
+  arrowIcon: {
+    fontSize: 16,
+    color: "#888",
+  },
+  dropdown: {
     backgroundColor: "#fff",
-    borderRadius: 16,
-    padding: 20,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    borderRadius: 10,
+    marginTop: 5,
   },
   option: {
     padding: 15,

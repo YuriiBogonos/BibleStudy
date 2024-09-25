@@ -37,6 +37,7 @@ export default function TabLayout() {
         options={{
           title: "Account",
           tabBarIcon: TabAccountIcon,
+          headerShown: false,
         }}
       />
       <Tabs.Screen

@@ -7,13 +7,11 @@ export default function IndexScreen() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const checkAuth = () => {
-      const user = auth().currentUser;
-      console.log("user", user);
+    const subscriber = auth().onAuthStateChanged((user) => {
       setIsAuthenticated(!!user);
-    };
+    });
 
-    checkAuth();
+    return () => subscriber();
   }, []);
 
   if (isAuthenticated === null) {
@@ -23,10 +21,10 @@ export default function IndexScreen() {
       </View>
     );
   }
-  console.log("isAuthenticated", isAuthenticated);
+
   return isAuthenticated ? (
-    <Redirect href="/(tabs)/home" /> // Navigate to the main tabs for authenticated users
+    <Redirect href="/(tabs)/home" />
   ) : (
-    <Redirect href="/(auth)/signUp" /> // Navigate to the login screen for unauthenticated users
+    <Redirect href="/(auth)/signUp" />
   );
 }

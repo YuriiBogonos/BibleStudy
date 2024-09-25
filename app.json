@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "BibleStudy",
-    "slug": "BibleStudy",
+    "slug": "bible-study-dev",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "bundleIdentifier": "com.Rueben.BibleStudy",
     },
     "android": {
       "adaptiveIcon": {
@@ -22,7 +22,6 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.Rueben.BibleStudy",
-      "googleServicesFile": "./google-services.json"
     },
     "web": {
       "bundler": "metro",
@@ -32,10 +31,16 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "@react-native-google-signin/google-signin",
+      "@react-native-google-signin/google-signin"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "698ab5ea-aa8b-4444-aae1-52bcf4a4a6ce"
+      }
+    },
+    "owner": "yuriibogonos"
   }
 }

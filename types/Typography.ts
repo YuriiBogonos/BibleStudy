@@ -102,4 +102,11 @@ export const Typography = StyleSheet.create({
     fontSize: 12,
     lineHeight: 14.06,
   },
+  ModalTitle: {
+    fontFamily: "Roboto",
+    fontWeight: "500",
+    fontSize: 20,
+    lineHeight: 22,
+    letterSpacing: -0.4,
+  },
 });

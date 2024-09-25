@@ -1,4 +1,3 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   DarkTheme,
   DefaultTheme,
@@ -7,24 +6,24 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
-
+import auth from "@react-native-firebase/auth";
 import { useColorScheme } from "@/components/useColorScheme";
+import { store } from "@/store/store";
+import { Provider } from "react-redux";
+import { PortalHost, PortalProvider } from "@gorhom/portal";
 
 export { ErrorBoundary } from "expo-router";
 
 export const unstable_settings = {
-  initialRouteName: "splash",
+  initialRouteName: "home",
 };
 
-SplashScreen.preventAutoHideAsync();
+// SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    ...FontAwesome.font,
-  });
+  const [loaded, error] = useFonts({});
 
   useEffect(() => {
     if (error) throw error;
@@ -45,15 +44,19 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack initialRouteName={"signUp"}>
-        <Stack.Screen name="splash" options={{ headerShown: false }} />
-        <Stack.Screen name="welcome" options={{ headerShown: false }} />
-        <Stack.Screen name="signUp" options={{ headerShown: false }} />
-        {/*<Stack.Screen name="(tabs)" options={{ headerShown: false }} />*/}
-      </Stack>
-    </ThemeProvider>
+    <PortalProvider>
+      <Provider store={store}>
+        <ThemeProvider
+          value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+        >
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          </Stack>
+          <PortalHost name={"Modals"} />
+        </ThemeProvider>
+      </Provider>
+    </PortalProvider>
   );
 }

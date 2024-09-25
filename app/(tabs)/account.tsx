@@ -1,4 +1,4 @@
-import { Alert, StyleSheet } from "react-native";
+import { Alert, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import { View } from "@/components/Themed";
 import SettingsItem from "@/components/ui/AccountSettingsItem/AccountSettingsItem";
@@ -11,8 +11,9 @@ import ScreenWrapper from "@/components/ScreenWrapper";
 import { useDispatch } from "react-redux";
 import { useRouter } from "expo-router";
 import { signOutService } from "@/services/authServices/SignOutService";
-import { RootState } from "@/store/store";
 import { signOutFailure, signOutSuccess } from "@/store/slices/auhtSlice";
+import CustomButton from "@/components/ui/CustomButton/CustomButton";
+import { Typography } from "@/types/Typography";
 
 export default function Account() {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ export default function Account() {
   return (
     <ScreenWrapper>
       <View style={styles.container}>
+        <Text style={Typography.h1}>User</Text>
         <SettingsItem
           icon={<AccountSettingsIcon />}
           text="Account Settings"
@@ -54,11 +56,11 @@ export default function Account() {
           text="Website"
           onPress={() => console.log("Navigate to Website")}
         />
-        <SettingsItem
-          icon={<AccountSettingsSignOutIcon />}
-          text="Sign out"
-          onPress={handleSignOut}
-        />
+        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
+          <AccountSettingsSignOutIcon />
+          <Text style={styles.signOutText}>Sign out</Text>
+        </TouchableOpacity>
+        <CustomButton text={"Donate"} onPress={() => console.log("Donate")} />
       </View>
     </ScreenWrapper>
   );
@@ -68,5 +70,14 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     paddingHorizontal: 20,
+  },
+  signOutButton: {
+    flexDirection: "row",
+    padding: 16,
+    marginVertical: 12,
+    borderRadius: 10,
+  },
+  signOutText: {
+    marginLeft: 12,
   },
 });

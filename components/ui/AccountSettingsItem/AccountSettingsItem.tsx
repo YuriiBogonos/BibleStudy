@@ -1,6 +1,8 @@
 import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Colors } from "@/types/Colors";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { Typography } from "@/types/Typography";
 
 interface SettingsItemProps {
   icon: React.ReactNode;
@@ -12,9 +14,9 @@ const SettingsItem: React.FC<SettingsItemProps> = ({ icon, text, onPress }) => {
   return (
     <TouchableOpacity style={styles.itemContainer} onPress={onPress}>
       <View style={styles.iconContainer}>{icon}</View>
-      <Text style={styles.text}>{text}</Text>
+      <Text style={[Typography.bodyMedium, styles.text]}>{text}</Text>
       <View style={styles.arrowContainer}>
-        <Text>{">"}</Text>
+        <AntDesign name="right" size={14} color={Colors.DarkBlue} />
       </View>
     </TouchableOpacity>
   );
@@ -25,9 +27,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#F9F9FF",
-    padding: 16,
     marginVertical: 8,
-    borderRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 16,
   },
   iconContainer: {
     width: 24,
@@ -38,7 +41,6 @@ const styles = StyleSheet.create({
   },
   text: {
     flex: 1,
-    fontSize: 16,
     color: Colors.Black,
   },
   arrowContainer: {

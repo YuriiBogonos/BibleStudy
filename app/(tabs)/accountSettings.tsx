@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
-import { router, useRouter } from "expo-router";
+import { router } from "expo-router";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import AccountSettingsForm from "@/components/forms/AccountSettingsForm";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { sendPasswordResetEmail } from "@/services/authServices/changePasswordService";
 import { deleteAccountService } from "@/services/authServices/DeleteAccountService";
-import DeleteAccountModal from "@/components/modals/DeleteAccountModal";
+import CustomModal from "@/components/ui/CustomModal/CustomModal";
 
 const AccountSettings: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -51,40 +51,45 @@ const AccountSettings: React.FC = () => {
   };
 
   return (
-    <ScreenWrapper>
-      <View style={styles.container}>
-        <Text style={styles.title}>Account Settings</Text>
+    <>
+      <ScreenWrapper>
+        <View style={styles.container}>
+          <Text style={styles.title}>Account Settings</Text>
 
-        <AccountSettingsForm initialValues={initialValues} />
+          <AccountSettingsForm initialValues={initialValues} />
 
-        <TouchableOpacity onPress={handleChangePassword}>
-          <Text style={styles.changePasswordLink}>Change password</Text>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={handleChangePassword}>
+            <Text style={styles.changePasswordLink}>Change password</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.deleteButton}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.deleteText}>Delete my account</Text>
-        </TouchableOpacity>
-        <DeleteAccountModal
-          visible={isModalVisible}
-          onCancel={() => setModalVisible(false)}
-          onDelete={async () => {
-            await handleDeleteAccount();
-            setModalVisible(false);
-          }}
-        />
-      </View>
-    </ScreenWrapper>
+          <TouchableOpacity
+            style={styles.deleteButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.deleteText}>Delete my account</Text>
+          </TouchableOpacity>
+        </View>
+      </ScreenWrapper>
+      <CustomModal
+        visible={isModalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={async () => {
+          await handleDeleteAccount();
+          setModalVisible(false);
+        }}
+        message="Are you sure you want to delete your account?"
+        confirmText="Delete account"
+        cancelText="Cancel"
+        showWarning={true}
+      />
+    </>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
+    width: "100%",
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 24,
