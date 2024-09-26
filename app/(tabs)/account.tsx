@@ -1,7 +1,7 @@
 import { Alert, StyleSheet, Text, TouchableOpacity } from "react-native";
 
 import { View } from "@/components/Themed";
-import SettingsItem from "@/components/ui/AccountSettingsItem/AccountSettingsItem";
+import SettingsItem from "@/components/ui/AccountSettingsItem";
 import AccountSettingsIcon from "@/assets/images/AccountSettingsIcon";
 import AccountSettingsAboutIcon from "@/assets/images/AccountSettingsAboutIcon";
 import AccountSettingSupportIcon from "@/assets/images/AccountSettingSupportIcon";
@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 import { useRouter } from "expo-router";
 import { signOutService } from "@/services/authServices/SignOutService";
 import { signOutFailure, signOutSuccess } from "@/store/slices/auhtSlice";
-import CustomButton from "@/components/ui/CustomButton/CustomButton";
+import CustomButton from "@/components/ui/CustomButton";
 import { Typography } from "@/types/Typography";
 
 export default function Account() {

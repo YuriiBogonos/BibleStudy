@@ -2,6 +2,8 @@ import { FC, useState } from "react";
 import { TouchableOpacity, View, Text, StyleSheet } from "react-native";
 import { Colors } from "@/types/Colors";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { Typography } from "@/types/Typography";
+
 interface CustomSelectProps {
   options: string[];
   value: string;
@@ -23,7 +25,13 @@ const CustomSelect: FC<CustomSelectProps> = ({
         onPress={() => setDropdownVisible(!isDropdownVisible)}
         style={styles.input}
       >
-        <Text style={styles.placeholderText}>
+        <Text
+          style={[
+            Typography.bodyRegular,
+            styles.text,
+            value ? styles.selectedText : styles.placeholderText,
+          ]}
+        >
           {value || placeholder || "Select an option"}
         </Text>
         <AntDesign name="down" size={14} color={Colors.DarkBlue} />
@@ -63,24 +71,24 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
   },
-  placeholderText: {
-    color: "#888",
-  },
-  arrowIcon: {
+  text: {
     fontSize: 16,
-    color: "#888",
+  },
+  placeholderText: {
+    color: "#C1C1C1", // Gray color for placeholder
+  },
+  selectedText: {
+    color: Colors.Black, // Black color for selected value
   },
   dropdown: {
-    backgroundColor: "#fff",
-    borderColor: "#ddd",
+    backgroundColor: Colors.LightGray,
+    borderColor: "#F8F6FF",
     borderWidth: 1,
     borderRadius: 10,
     marginTop: 5,
   },
   option: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    padding: 10,
   },
 });
 

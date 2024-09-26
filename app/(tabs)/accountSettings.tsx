@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { FC, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { router } from "expo-router";
 import ScreenWrapper from "@/components/ScreenWrapper";
@@ -7,11 +7,16 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import { sendPasswordResetEmail } from "@/services/authServices/changePasswordService";
 import { deleteAccountService } from "@/services/authServices/DeleteAccountService";
-import CustomModal from "@/components/ui/CustomModal/CustomModal";
+import CustomModal from "@/components/ui/CustomModal";
+import { Colors } from "@/types/Colors";
+import DeleteAccountIcon from "@/assets/images/DeleteAccountIcon";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import { Typography } from "@/types/Typography";
 
-const AccountSettings: React.FC = () => {
+const AccountSettings: FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const [isModalVisible, setModalVisible] = useState(false);
+
   const handleDeleteAccount = async () => {
     const result = await deleteAccountService();
     if (result.success) {
@@ -66,7 +71,13 @@ const AccountSettings: React.FC = () => {
             style={styles.deleteButton}
             onPress={() => setModalVisible(true)}
           >
-            <Text style={styles.deleteText}>Delete my account</Text>
+            <View style={styles.deleteButtonLeft}>
+              <DeleteAccountIcon />
+              <Text style={[Typography.bodyMedium, styles.deleteText]}>
+                Delete my account
+              </Text>
+            </View>
+            <AntDesign name="right" size={14} color={Colors.DarkBlue} />
           </TouchableOpacity>
         </View>
       </ScreenWrapper>
@@ -98,25 +109,29 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   changePasswordLink: {
-    color: "#1e90ff",
+    color: Colors.DarkBlue,
     fontSize: 16,
     textAlign: "right",
     marginVertical: 10,
   },
   deleteButton: {
     marginTop: 30,
-    backgroundColor: "#fff5f5",
-    padding: 12,
-    borderRadius: 8,
-    borderColor: "#ff4d4f",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 16,
+    borderColor: "#F8F6FF",
     borderWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  deleteButtonLeft: {
     flexDirection: "row",
     alignItems: "center",
   },
   deleteText: {
-    color: "#ff4d4f",
-    fontSize: 16,
     marginLeft: 10,
+    color: Colors.Black,
   },
 });
 

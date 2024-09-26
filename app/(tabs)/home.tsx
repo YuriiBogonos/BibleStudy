@@ -1,16 +1,18 @@
 import { View, Text, StyleSheet } from "react-native";
 import { Typography } from "@/types/Typography";
 import ScreenWrapper from "@/components/ScreenWrapper";
-import VerseOfWeek from "@/components/ui/VerseOfWeek/VerseOfWeek";
-import CustomButton from "@/components/ui/CustomButton/CustomButton";
+import VerseOfWeek from "@/components/ui/VerseOfWeek";
+import CustomButton from "@/components/ui/CustomButton";
 import PlusIconButton from "@/assets/images/PlusIconButton";
-import SessionHistory from "@/components/ui/SessionHistory/SessionHistory";
+import SessionHistory from "@/components/ui/SessionHistory";
 import { sessionHistory } from "@/mock/mockSessionHistory";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import HistoryList from "@/components/ui/HistoryList/HistoryList";
+
 export default function MainScreen() {
   const user = useSelector((state: RootState) => state.auth.user);
-  console.log("user", user);
+  console.log(user);
   const mockHandlePress = () => {
     console.log("Button pressed in Home screen");
   };
@@ -27,7 +29,7 @@ export default function MainScreen() {
           text={"Start new session"}
         />
         <View style={styles.sessionHistory}>
-          <SessionHistory sessions={sessionHistory} />
+          <HistoryList items={sessionHistory} />
         </View>
       </View>
     </ScreenWrapper>

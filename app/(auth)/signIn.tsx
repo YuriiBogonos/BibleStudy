@@ -1,14 +1,14 @@
-import React from "react";
+import { FC } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Typography } from "@/types/Typography";
-import AuthButton from "@/components/ui/AuthButton/AuthButton";
+import AuthButton from "@/components/ui/AuthButton";
 import GoogleIcon from "@/assets/images/GoogleIcon";
 import AppleIcon from "@/assets/images/AppleIcon";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import SignInForm from "@/components/forms/SignInForm";
 import ChildrenInGarden from "@/assets/images/ChildrenWithGarden";
 
-const SignIn: React.FC = () => {
+const SignIn: FC = () => {
   return (
     <ScreenWrapper>
       <View style={styles.container}>

@@ -2,15 +2,16 @@ import React from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Colors } from "@/types/Colors";
 import CustomInput from "../../components/ui/CustomInput/CustomInput";
-import CustomSelect from "../../components/ui/CustomSelect/CustomSelect";
+import CustomSelect from "../../components/ui/CustomSelect";
 import { InputType } from "@/components/ui/CustomInput/types";
 import ScreenWrapper from "../../components/ScreenWrapper";
 import { Typography } from "@/types/Typography";
 import { questionHistory } from "@/mock/mockQuestionsHistory";
 import { Formik, FormikHelpers } from "formik";
 import { QuestionsGenerationSchema } from "@/validation/QuestionsGenerationSchema";
-import Counter from "@/components/ui/Counter/Counter";
+import Counter from "@/components/ui/Counter";
 import { useGenerateResponseMutation } from "@/api/openaiApi";
+import HistoryList from "@/components/ui/HistoryList/HistoryList";
 
 interface FormValues {
   question: string;
@@ -45,12 +46,11 @@ export default function Questions() {
           },
           { role: "user", content: prompt },
         ],
-        max_tokens: 150, // Adjust as needed
+        max_tokens: 150,
       });
 
       console.log("API Response:", result);
 
-      // If the API call is successful, reset the form
       resetForm();
     } catch (error) {
       console.error("Error generating response:", error);
@@ -76,19 +76,21 @@ export default function Questions() {
             <Text style={[Typography.homeTitle, styles.title]}>
               Bible Inquiries
             </Text>
+            <View style={{ paddingVertical: 12 }}>
+              <Text style={[Typography.bodySemibold, styles.label]}>
+                Ask Your Question
+              </Text>
+              <CustomInput
+                type={InputType.Text}
+                placeholder="Type your question here..."
+                value={values.question}
+                onChangeText={handleChange("question")}
+              />
+              {touched.question && errors.question && (
+                <Text style={styles.errorText}>{errors.question}</Text>
+              )}
+            </View>
 
-            <Text style={[Typography.bodySemibold, styles.label]}>
-              Ask Your Question
-            </Text>
-            <CustomInput
-              type={InputType.Text}
-              placeholder="Type your question here..."
-              value={values.question}
-              onChangeText={handleChange("question")}
-            />
-            {touched.question && errors.question && (
-              <Text style={styles.errorText}>{errors.question}</Text>
-            )}
             <View style={styles.versesWrapper}>
               <View style={{ flex: 1 }}>
                 <Text style={[Typography.bodySemibold, styles.label]}>
@@ -109,57 +111,48 @@ export default function Questions() {
                 <Text style={styles.errorText}>{errors.verses}</Text>
               )}
             </View>
-
-            <Text style={[Typography.bodySemibold, styles.label]}>
-              Preferred Bible
-            </Text>
-            <CustomSelect
-              options={["NIV", "KJV", "ESV"]}
-              value={values.preferredBible}
-              onValueChange={(value) => setFieldValue("preferredBible", value)}
-              placeholder="Select preferred Bible"
-            />
-            {touched.preferredBible && errors.preferredBible && (
-              <Text style={styles.errorText}>{errors.preferredBible}</Text>
-            )}
-
-            <Text style={styles.label}>Level of complexity</Text>
-            <CustomSelect
-              options={["Study", "Meditation", "Devotional"]}
-              value={values.complexity}
-              onValueChange={(value) => setFieldValue("complexity", value)}
-              placeholder="Select level"
-            />
-            {touched.complexity && errors.complexity && (
-              <Text style={styles.errorText}>{errors.complexity}</Text>
-            )}
+            <View style={{ paddingVertical: 12 }}>
+              <Text style={[Typography.bodySemibold, styles.label]}>
+                Preferred Bible
+              </Text>
+              <CustomSelect
+                options={["NIV", "KJV", "ESV"]}
+                value={values.preferredBible}
+                onValueChange={(value) =>
+                  setFieldValue("preferredBible", value)
+                }
+                placeholder="Select preferred Bible"
+              />
+              {touched.preferredBible && errors.preferredBible && (
+                <Text style={styles.errorText}>{errors.preferredBible}</Text>
+              )}
+            </View>
+            <View>
+              <Text style={[Typography.bodySemibold, styles.label]}>
+                Level of complexity
+              </Text>
+              <CustomSelect
+                options={["Study", "Meditation", "Devotional"]}
+                value={values.complexity}
+                onValueChange={(value) => setFieldValue("complexity", value)}
+                placeholder="Select level"
+              />
+              {touched.complexity && errors.complexity && (
+                <Text style={styles.errorText}>{errors.complexity}</Text>
+              )}
+            </View>
 
             <TouchableOpacity
               onPress={() => handleSubmit()}
               style={styles.submitButton}
             >
-              <Text style={styles.submitButtonText}>+ Submit</Text>
+              <Text style={[Typography.bodyMedium, styles.submitButtonText]}>
+                + Submit
+              </Text>
             </TouchableOpacity>
 
             <View style={styles.historyContainer}>
-              <View style={styles.historyHeader}>
-                <Text style={styles.historyTitle}>Question history</Text>
-                <TouchableOpacity>
-                  <Text style={styles.viewHistory}>View full history</Text>
-                </TouchableOpacity>
-              </View>
-
-              {questionHistory.map((item) => (
-                <View key={item.id} style={styles.historyItem}>
-                  <Text style={styles.historyQuestion}>{item.question}</Text>
-                  <View style={styles.historyDetails}>
-                    <Text>{item.verses}</Text>
-                    <Text>{item.bible}</Text>
-                    <Text>{item.complexity}</Text>
-                    <Text>{item.date}</Text>
-                  </View>
-                </View>
-              ))}
+              <HistoryList items={questionHistory} />
             </View>
           </View>
         )}
@@ -173,10 +166,9 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 20,
   },
-  title: {
-    marginBottom: 20,
-  },
+  title: {},
   label: {
+    paddingVertical: 2,
     color: Colors.Black,
   },
   helperText: {
@@ -191,9 +183,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   submitButtonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
+    color: Colors.White,
   },
   historyContainer: {
     marginTop: 30,
@@ -224,6 +214,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   versesWrapper: {
+    paddingVertical: 12,
     flexDirection: "row",
     alignItems: "center",
   },
