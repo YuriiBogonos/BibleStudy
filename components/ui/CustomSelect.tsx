@@ -75,10 +75,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   placeholderText: {
-    color: "#C1C1C1", // Gray color for placeholder
+    color: "#C1C1C1",
   },
   selectedText: {
-    color: Colors.Black, // Black color for selected value
+    color: Colors.Black,
   },
   dropdown: {
     backgroundColor: Colors.LightGray,

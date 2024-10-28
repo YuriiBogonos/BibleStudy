@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Colors } from "@/types/Colors";
 import CustomInput from "../../components/ui/CustomInput/CustomInput";
@@ -10,8 +10,9 @@ import { questionHistory } from "@/mock/mockQuestionsHistory";
 import { Formik, FormikHelpers } from "formik";
 import { QuestionsGenerationSchema } from "@/validation/QuestionsGenerationSchema";
 import Counter from "@/components/ui/Counter";
-import { useGenerateResponseMutation } from "@/api/openaiApi";
 import HistoryList from "@/components/ui/HistoryList/HistoryList";
+import { useGenerateResponseMutation } from "@/api/baseQuery";
+import { useRouter } from "expo-router";
 
 interface FormValues {
   question: string;
@@ -22,6 +23,9 @@ interface FormValues {
 
 export default function Questions() {
   const [generateResponse] = useGenerateResponseMutation();
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
   const initialValues: FormValues = {
     question: "",
     verses: 1,
@@ -34,29 +38,51 @@ export default function Questions() {
     { resetForm }: FormikHelpers<FormValues>,
   ) => {
     try {
-      const prompt = `Question: ${values.question}\nNumber of verses: ${values.verses}\nPreferred Bible: ${values.preferredBible}\nComplexity: ${values.complexity}`;
+      setError(null);
 
       const result = await generateResponse({
-        model: "gpt-3.5-turbo",
+        model: "gpt-4",
         messages: [
           {
             role: "system",
             content:
               "You are a helpful assistant that answers Bible-related questions.",
           },
-          { role: "user", content: prompt },
+          {
+            role: "user",
+            content: `Question: ${values.question}\nNumber of verses: ${values.verses}\nPreferred Bible: ${values.preferredBible}\nComplexity: ${values.complexity}`,
+          },
         ],
-        max_tokens: 150,
+        max_tokens: 200,
       });
 
       console.log("API Response:", result);
 
-      resetForm();
+      if ("data" in result && result.data && "verses" in result.data) {
+        const verses = result.data.verses || [];
+        const serializedVersesData = JSON.stringify(verses);
+        console.log("Serialized verses data:", serializedVersesData);
+        router.replace({
+          pathname: "/(sessions)/questionResult",
+          params: {
+            verses: serializedVersesData,
+            question: values.question,
+            preferredBible: values.preferredBible, // Додаємо preferredBible
+            complexity: values.complexity, // Додаємо complexity
+          },
+        });
+
+        resetForm();
+      } else {
+        throw new Error("Unexpected API response structure");
+      }
     } catch (error) {
       console.error("Error generating response:", error);
+      setError(
+        "An error occurred while generating the response. Please try again.",
+      );
     }
   };
-
   return (
     <ScreenWrapper>
       <Formik
@@ -73,9 +99,7 @@ export default function Questions() {
           setFieldValue,
         }) => (
           <View style={styles.container}>
-            <Text style={[Typography.homeTitle, styles.title]}>
-              Bible Inquiries
-            </Text>
+            <Text style={[Typography.homeTitle]}>Bible Inquiries</Text>
             <View style={{ paddingVertical: 12 }}>
               <Text style={[Typography.bodySemibold, styles.label]}>
                 Ask Your Question
@@ -150,6 +174,7 @@ export default function Questions() {
                 + Submit
               </Text>
             </TouchableOpacity>
+            {error && <Text style={styles.errorText}>{error}</Text>}
 
             <View style={styles.historyContainer}>
               <HistoryList items={questionHistory} />
@@ -166,7 +191,6 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 20,
   },
-  title: {},
   label: {
     paddingVertical: 2,
     color: Colors.Black,
@@ -187,31 +211,6 @@ const styles = StyleSheet.create({
   },
   historyContainer: {
     marginTop: 30,
-  },
-  historyHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  historyTitle: {
-    fontSize: 18,
-  },
-  viewHistory: {
-    color: Colors.DarkBlue,
-    textDecorationLine: "underline",
-  },
-  historyItem: {
-    backgroundColor: Colors.LightGray,
-    padding: 15,
-    borderRadius: 10,
-    marginVertical: 10,
-  },
-  historyQuestion: {
-    marginBottom: 5,
-  },
-  historyDetails: {
-    flexDirection: "row",
-    justifyContent: "space-between",
   },
   versesWrapper: {
     paddingVertical: 12,

@@ -12,6 +12,7 @@ interface CustomModalProps {
   confirmText: string;
   cancelText: string;
   showWarning?: boolean;
+  icon?: React.ReactNode;
 }
 
 export default function CustomModal({
@@ -22,6 +23,7 @@ export default function CustomModal({
   confirmText,
   cancelText,
   showWarning = false,
+  icon,
 }: CustomModalProps) {
   return (
     <Portal>
@@ -31,6 +33,7 @@ export default function CustomModal({
             <Text style={[Typography.bodySemibold, styles.message]}>
               {message}
             </Text>
+            {icon && <View style={styles.iconContainer}>{icon}</View>}
             {showWarning && (
               <Text style={[Typography.bodyRegular, styles.warningText]}>
                 You will lose all data in the associated app using the same
@@ -91,10 +94,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   confirmButton: {
-    backgroundColor: "#3498db",
+    backgroundColor: Colors.DarkBlue,
     paddingVertical: 10,
     paddingHorizontal: 12,
-    borderRadius: 5,
+    borderRadius: 50,
     flex: 1,
     alignItems: "center",
     marginRight: 10,
@@ -114,6 +117,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: Colors.DarkBlue,
+  },
+  iconContainer: {
+    marginBottom: 10,
   },
   cancelText: {
     color: Colors.DarkBlue,

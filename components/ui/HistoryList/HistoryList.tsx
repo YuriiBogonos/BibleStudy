@@ -1,8 +1,14 @@
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import HistoryHeader from "./HistoryHeader";
 import HistoryItem from "./HistoryItem";
 import HistoryEmptyState from "./HistoryEmptyState";
-import { BaseHistoryItem, Session } from "./types";
+import {
+  BaseHistoryItem,
+  HistoryType,
+  HistoryTypeEnum,
+  Session,
+} from "./types";
 
 interface HistoryListProps<T extends BaseHistoryItem> {
   items: T[];
@@ -14,17 +20,35 @@ const HistoryList = <T extends BaseHistoryItem>({
   const isSession = (item: BaseHistoryItem): item is Session =>
     "questions" in item;
 
+  const determineHistoryType = (): HistoryTypeEnum => {
+    if (items.length === 0) {
+      return HistoryType.QUESTION;
+    }
+    return isSession(items[0]) ? HistoryType.SESSION : HistoryType.QUESTION;
+  };
+
+  const historyType = determineHistoryType();
+
   return (
     <View style={styles.container}>
       <HistoryHeader
-        title={isSession(items[0]) ? "Session History" : "Question History"}
+        title={
+          historyType === HistoryType.SESSION
+            ? "Session History"
+            : "Question History"
+        }
+        historyType={historyType}
       />
       {items.length === 0 ? (
-        <HistoryEmptyState isSessionHistory={isSession(items[0])} />
+        <HistoryEmptyState
+          isSessionHistory={historyType === HistoryType.SESSION}
+        />
       ) : (
         <View style={styles.itemList}>
-          {items.map((item, index) => (
-            <HistoryItem key={index} item={item} />
+          {items.map((item) => (
+            <View style={styles.itemWrapper}>
+              <HistoryItem item={item} />
+            </View>
           ))}
         </View>
       )}
@@ -39,7 +63,9 @@ const styles = StyleSheet.create({
   },
   itemList: {
     flexDirection: "column",
-    gap: 10,
+  },
+  itemWrapper: {
+    marginBottom: 10,
   },
 });
 

@@ -1,14 +1,5 @@
-import { BaseQueryFn } from "@reduxjs/toolkit/query";
-import OpenAI from "openai";
-import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
-
-type Role = "user" | "system" | "assistant";
-type FinishReason =
-  | "stop"
-  | "length"
-  | "tool_calls"
-  | "content_filter"
-  | "function_call";
+import { createApi } from '@reduxjs/toolkit/query/react';
+import openAiBaseQuery, { FinishReason, Role } from '@/api/openaiApi';
 
 interface Message {
   role: Role;
@@ -21,10 +12,20 @@ interface GenerateResponsePayload {
   max_tokens?: number;
 }
 
+export interface GenerateSessionPayload extends GenerateResponsePayload {
+  sessionInfo: {
+    sessionName: string;
+    focusTopics: string;
+    numberOfQuestions: number;
+    preferredBible: string;
+    complexity: string;
+  };
+}
+
 interface ChatCompletionChoice {
   index: number;
   message: {
-    role: "assistant";
+    role: 'assistant';
     content: string | null;
   };
   finish_reason: FinishReason;
@@ -43,63 +44,33 @@ interface ChatCompletion {
   };
 }
 
-const openai = new OpenAI({
-  apiKey: process.env.EXPO_PUBLIC_OPENAI_API_KEY,
+interface SessionCompletion {
+  id: string;
+  sessionName: string;
+  focusTopics: string[];
+  preferredBible: string;
+  complexity: string;
+  questions: string[];
+  answers: string[];
+}
+
+export const openAiApi = createApi({
+  reducerPath: 'openAiApi',
+  baseQuery: openAiBaseQuery,
+  endpoints: (builder) => ({
+    generateResponse: builder.mutation<ChatCompletion, GenerateResponsePayload>(
+      {
+        query: (payload) => payload,
+      }
+    ),
+    generateSession: builder.mutation<
+      SessionCompletion,
+      GenerateSessionPayload
+    >({
+      query: (payload) => payload,
+    }),
+  }),
 });
 
-const createChatCompletion = async (
-  payload: GenerateResponsePayload,
-): Promise<OpenAI.Chat.Completions.ChatCompletion> => {
-  return openai.chat.completions.create({
-    model: payload.model,
-    messages: payload.messages,
-    max_tokens: payload.max_tokens || 100,
-  });
-};
-
-const mapResponseToCompletion = (
-  response: OpenAI.Chat.Completions.ChatCompletion,
-): ChatCompletion => ({
-  id: response.id,
-  object: response.object,
-  created: response.created,
-  model: response.model,
-  choices: response.choices.map((choice) => ({
-    index: choice.index,
-    message: {
-      role: choice.message.role as "assistant",
-      content: choice.message.content,
-    },
-    finish_reason: choice.finish_reason as FinishReason,
-  })),
-  usage: response.usage,
-});
-
-const handleError = (error: unknown): FetchBaseQueryError => {
-  if (error instanceof OpenAI.APIError) {
-    return {
-      status: error.status,
-      data: error.message,
-    } as FetchBaseQueryError;
-  }
-  return {
-    status: "CUSTOM_ERROR",
-    data: error instanceof Error ? error.message : "Unknown error",
-  } as FetchBaseQueryError;
-};
-
-const openAiBaseQuery: BaseQueryFn<
-  GenerateResponsePayload,
-  ChatCompletion,
-  FetchBaseQueryError
-> = async (payload) => {
-  try {
-    const response = await createChatCompletion(payload);
-    const chatCompletion = mapResponseToCompletion(response);
-    return { data: chatCompletion };
-  } catch (error: unknown) {
-    return { error: handleError(error) };
-  }
-};
-
-export default openAiBaseQuery;
+export const { useGenerateResponseMutation, useGenerateSessionMutation } =
+  openAiApi;

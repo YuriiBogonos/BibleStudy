@@ -12,6 +12,12 @@ export interface Session extends BaseHistoryItem {
 }
 
 export interface Question extends BaseHistoryItem {
-  id: string; // Unique identifier for each question
-  complexity: string; // Additional complexity field (e.g., 'Study', 'Devotional')
+  id: string;
+  complexity: string;
 }
+export enum HistoryType {
+  SESSION = "session",
+  QUESTION = "question",
+}
+
+export type HistoryTypeEnum = HistoryType.SESSION | HistoryType.QUESTION;

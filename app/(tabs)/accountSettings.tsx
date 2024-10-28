@@ -12,6 +12,7 @@ import { Colors } from "@/types/Colors";
 import DeleteAccountIcon from "@/assets/images/DeleteAccountIcon";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { Typography } from "@/types/Typography";
+import CustomHeader from "@/components/ui/CustomHeader";
 
 const AccountSettings: FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -59,8 +60,7 @@ const AccountSettings: FC = () => {
     <>
       <ScreenWrapper>
         <View style={styles.container}>
-          <Text style={styles.title}>Account Settings</Text>
-
+          <CustomHeader screenTitle="Account Settings" backScreen={"account"} />
           <AccountSettingsForm initialValues={initialValues} />
 
           <TouchableOpacity onPress={handleChangePassword}>
@@ -102,12 +102,7 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingHorizontal: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-    textAlign: "center",
-  },
+
   changePasswordLink: {
     color: Colors.DarkBlue,
     fontSize: 16,

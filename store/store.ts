@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/auhtSlice";
-import { openAiApi } from "@/api/openaiApi";
+import { openAiApi } from "@/api/baseQuery";
 
 export const store = configureStore({
   reducer: {

@@ -14,10 +14,15 @@ import { signOutService } from "@/services/authServices/SignOutService";
 import { signOutFailure, signOutSuccess } from "@/store/slices/auhtSlice";
 import CustomButton from "@/components/ui/CustomButton";
 import { Typography } from "@/types/Typography";
+import CustomModal from "@/components/ui/CustomModal";
+import { useState } from "react";
+import SignOutIcon from "@/assets/images/SignOutIcon";
 
 export default function Account() {
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const [modalVisible, setModalVisible] = useState(false);
 
   const handleSignOut = async () => {
     const result = await signOutService();
@@ -32,6 +37,20 @@ export default function Account() {
       Alert.alert("Error", result.error);
     }
   };
+
+  const handleSignOutClick = () => {
+    setModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+  };
+
+  const handleConfirmSignOut = () => {
+    handleSignOut();
+    setModalVisible(false);
+  };
+
   return (
     <ScreenWrapper>
       <View style={styles.container}>
@@ -56,12 +75,25 @@ export default function Account() {
           text="Website"
           onPress={() => console.log("Navigate to Website")}
         />
-        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
+        <TouchableOpacity
+          style={styles.signOutButton}
+          onPress={handleSignOutClick}
+        >
           <AccountSettingsSignOutIcon />
           <Text style={styles.signOutText}>Sign out</Text>
         </TouchableOpacity>
         <CustomButton text={"Donate"} onPress={() => console.log("Donate")} />
       </View>
+      <CustomModal
+        visible={modalVisible}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmSignOut}
+        message="Are you sure you want to log out now?"
+        confirmText="Confirm"
+        cancelText="Cancel"
+        showWarning={false}
+        icon={<SignOutIcon />}
+      />
     </ScreenWrapper>
   );
 }

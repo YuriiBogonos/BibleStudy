@@ -44,8 +44,31 @@ export default function TabLayout() {
       <Tabs.Screen
         name="accountSettings"
         options={{
-          title: "Account Settings",
+          headerShown: false,
           tabBarButton: () => null,
+        }}
+      />
+      <Tabs.Screen
+        name="questionFullHistory"
+        options={{
+          title: "Question History",
+          tabBarButton: () => null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="sessionFullHistory"
+        options={{
+          title: "Session History",
+          tabBarButton: () => null,
+          headerShown: false,
+        }}
+      />
+      <Tabs.Screen
+        name="multipleSession"
+        options={{
+          tabBarButton: () => null,
+          headerShown: false,
         }}
       />
     </Tabs>

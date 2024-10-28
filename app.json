@@ -14,14 +14,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.Rueben.BibleStudy",
+      "bundleIdentifier": "com.Rueben.BibleStudy"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.Rueben.BibleStudy",
+      "package": "com.Rueben.BibleStudy"
     },
     "web": {
       "bundler": "metro",

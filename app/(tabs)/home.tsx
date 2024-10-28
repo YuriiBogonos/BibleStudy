@@ -4,17 +4,17 @@ import ScreenWrapper from "@/components/ScreenWrapper";
 import VerseOfWeek from "@/components/ui/VerseOfWeek";
 import CustomButton from "@/components/ui/CustomButton";
 import PlusIconButton from "@/assets/images/PlusIconButton";
-import SessionHistory from "@/components/ui/SessionHistory";
 import { sessionHistory } from "@/mock/mockSessionHistory";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
 import HistoryList from "@/components/ui/HistoryList/HistoryList";
+import { useRouter } from "expo-router";
 
 export default function MainScreen() {
   const user = useSelector((state: RootState) => state.auth.user);
-  console.log(user);
+  const router = useRouter();
   const mockHandlePress = () => {
-    console.log("Button pressed in Home screen");
+    router.replace("/(tabs)/multipleSession");
   };
   return (
     <ScreenWrapper>
