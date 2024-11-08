@@ -1,4 +1,5 @@
 export interface BaseHistoryItem {
+  id:string;
   title: string;
   verses: number;
   version: string;

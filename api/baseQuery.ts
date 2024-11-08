@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import openAiBaseQuery, { FinishReason, Role } from '@/api/openaiApi';
+import openAiBaseQuery, { FinishReason, Question, Role } from '@/api/openaiApi';
 
 interface Message {
   role: Role;
@@ -47,10 +47,10 @@ interface ChatCompletion {
 interface SessionCompletion {
   id: string;
   sessionName: string;
-  focusTopics: string[];
+  focusTopic: string[];
   preferredBible: string;
   complexity: string;
-  questions: string[];
+  questions: Question[];
   answers: string[];
 }
 
