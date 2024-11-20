@@ -3,15 +3,12 @@ import { sanitizeUser } from "@/services/authServices/SignUpServive";
 
 export const signInWithEmailPassword = async (
   email: string,
-  password: string,
+  password: string
 ) => {
   try {
-    const userCredential = await auth().signInWithEmailAndPassword(
-      email,
-      password,
-    );
+    const { user } = await auth().signInWithEmailAndPassword(email, password);
 
-    const sanitizedUser = sanitizeUser(userCredential.user);
+    const sanitizedUser = sanitizeUser(user);
 
     return { success: true, user: sanitizedUser };
   } catch (error) {

@@ -1,18 +1,35 @@
 import React, { FC } from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  View,
+  ActivityIndicator,
+} from "react-native";
 import { Typography } from "@/types/Typography";
 
 interface AuthButtonProps {
   Icon: FC;
   text: string;
   onPress: () => void;
+  isLoading: boolean;
 }
 
-const AuthButton: FC<AuthButtonProps> = ({ Icon, text, onPress }) => {
+const AuthButton: FC<AuthButtonProps> = ({
+  Icon,
+  text,
+  onPress,
+  isLoading,
+}) => {
   return (
     <TouchableOpacity style={styles.button} onPress={onPress}>
       <Icon />
       <Text style={[Typography.smallMedium, styles.text]}>{text}</Text>
+      {isLoading && (
+        <View style={styles.loader}>
+          <ActivityIndicator />
+        </View>
+      )}
     </TouchableOpacity>
   );
 };
@@ -36,6 +53,11 @@ const styles = StyleSheet.create({
   text: {
     color: "#000",
     marginLeft: 10,
+  },
+  loader: {
+    position: "absolute",
+    top: 8,
+    right: 20,
   },
 });
 

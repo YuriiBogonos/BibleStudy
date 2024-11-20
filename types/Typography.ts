@@ -14,6 +14,7 @@ export const Typography = StyleSheet.create({
     fontSize: 28,
     lineHeight: 30.8,
     letterSpacing: -0.4,
+    marginTop: 16,
   },
   verseText: {
     fontFamily: "Roboto",

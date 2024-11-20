@@ -1,18 +1,19 @@
-import { Stack } from "expo-router";
+import { createStackNavigator } from "@react-navigation/stack";
+import AnswersSession from "./answersSession";
+import VerseResults from "./questionResult";
+
+const Stack = createStackNavigator();
 
 export default function SessionsLayout() {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false,
-      }}
-    >
+    <Stack.Navigator initialRouteName="answersSession">
       <Stack.Screen
         name="answersSession"
         options={{
           headerShown: false,
           header: () => null,
         }}
+        component={AnswersSession}
       />
       <Stack.Screen
         name="questionResult"
@@ -20,7 +21,8 @@ export default function SessionsLayout() {
           headerShown: false,
           header: () => null,
         }}
+        component={VerseResults}
       />
-    </Stack>
+    </Stack.Navigator>
   );
 }

@@ -33,6 +33,7 @@ const CustomInput: FC<CustomInputProps> = ({
             ? KeyboardType.EmailAddress
             : KeyboardType.Default
         }
+        autoCapitalize="none"
       />
       {type === InputType.Password && (
         <TouchableOpacity
