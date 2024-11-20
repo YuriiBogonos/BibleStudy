@@ -1,15 +1,26 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  ActivityIndicator,
+} from "react-native";
 import { Formik, FormikHelpers } from "formik";
+import { useDispatch } from "react-redux";
+import { useRouter } from "expo-router";
+
 import { InputType } from "@/components/ui/CustomInput/types";
 import CustomInput from "@/components/ui/CustomInput/CustomInput";
+
 import { Colors } from "@/types/Colors";
 import { Typography } from "@/types/Typography";
-import { useDispatch } from "react-redux";
+
 import { signUpWithEmailPassword } from "@/services/authServices/SignUpServive";
-import { useRouter } from "expo-router";
 import { SignUpSchema } from "@/validation/SignUpSchema";
-import { signUpFailure, signUpSuccess } from "@/store/slices/auhtSlice";
+
+import { formatFirebaseErrorMessage } from "@/services/formatFirebaseError";
 
 interface SignUpFormValues {
   fullName: string;
@@ -26,35 +37,54 @@ const initialValues: SignUpFormValues = {
 };
 
 const SignUpForm: React.FC = () => {
-  const dispatch = useDispatch();
   const router = useRouter();
+
+  const [isLoading, setLoading] = useState<boolean>(false);
+  const [firebaseError, setFirebaseError] = useState<string>("");
 
   const handleSignUp = async (
     values: SignUpFormValues,
-    { setSubmitting }: FormikHelpers<SignUpFormValues>,
+    { setSubmitting }: FormikHelpers<SignUpFormValues>
   ) => {
     const { email, password, fullName } = values;
-    const result = await signUpWithEmailPassword(email, password, fullName);
 
-    setSubmitting(false);
+    setLoading(true);
+    setFirebaseError("");
 
-    if (result.success) {
-      dispatch(signUpSuccess(result.user));
-      Alert.alert("Success", "Please check your email for verification!");
-      router.replace("/home");
-    } else {
-      const errorMessage = result.error ?? "An unknown error occurred";
-      dispatch(signUpFailure(errorMessage));
-      Alert.alert("Error", errorMessage);
+    try {
+      const result = await signUpWithEmailPassword(email, password, fullName);
+
+      setSubmitting(false);
+
+      if (result.error) {
+        const errorMessage = result.error ?? "An unknown error occurred scdsdc";
+
+        setFirebaseError(formatFirebaseErrorMessage(errorMessage));
+        setLoading(false);
+
+        return;
+      }
+
+      Alert.alert(
+        "You have successfully created an account",
+        "Please check your email for verification!"
+      );
+
+      router.replace("/signIn");
+
+      setLoading(false);
+    } catch (error) {
+      console.log("error in signUpWithEmailPassword", error);
+    } finally {
+      setLoading(false);
     }
   };
-  const navigateToSignIn = () => {
-    router.replace("/signIn");
-  };
+
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={SignUpSchema}
+      // TODO: return validationSchema
+      // validationSchema={SignUpSchema}
       onSubmit={handleSignUp}
     >
       {({
@@ -122,9 +152,20 @@ const SignUpForm: React.FC = () => {
             disabled={isSubmitting}
           >
             <Text style={styles.buttonText}>Continue</Text>
+            {isLoading && (
+              <View style={styles.loader}>
+                <ActivityIndicator color={"white"} />
+              </View>
+            )}
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={navigateToSignIn}>
+          {firebaseError && (
+            <View>
+              <Text style={styles.firebaseErrorText}>{firebaseError}</Text>
+            </View>
+          )}
+
+          <TouchableOpacity onPress={() => router.replace("/signIn")}>
             <Text style={[Typography.smallRegular, styles.loginText]}>
               Already have an account?
             </Text>
@@ -171,7 +212,17 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: Colors.Black,
     textDecorationLine: "underline",
-    marginTop: 20,
+    marginVertical: 20,
+  },
+  loader: {
+    position: "absolute",
+    top: 14,
+    right: 20,
+  },
+  firebaseErrorText: {
+    textAlign: "center",
+    color: "red",
+    marginTop: 14,
   },
 });
 

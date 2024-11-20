@@ -8,6 +8,9 @@ export const sendPasswordResetEmail = async (email: string) => {
     if (error instanceof Error) {
       return { success: false, error: error.message };
     }
-    return { success: false, error: "An unknown error occurred" };
+    return {
+      success: false,
+      error: "An unknown error occurred in sendPasswordResetEmail ",
+    };
   }
 };

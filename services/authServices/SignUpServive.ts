@@ -1,39 +1,63 @@
-import auth from "@react-native-firebase/auth";
+import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 import firestore from "@react-native-firebase/firestore";
-import { User } from "@/types/User";
+
+// import { User } from "@/types/User";
 
 export const signUpWithEmailPassword = async (
   email: string,
   password: string,
-  fullName: string,
+  displayName: string
 ) => {
   try {
     const userCredential = await auth().createUserWithEmailAndPassword(
       email,
-      password,
+      password
     );
 
-    const userDocRef = firestore()
+    const querySnapshot = await firestore()
       .collection("users")
-      .doc(userCredential.user.uid);
-    await userDocRef.set({
-      fullName: fullName,
+      .where("email", "==", email)
+      .get();
+
+    if (!querySnapshot.empty) {
+      console.log("A user with this email already exists.");
+      return {
+        success: false,
+        error: "A user with this email already exists.",
+      };
+    }
+
+    await firestore().collection("users").doc(userCredential.user.uid).set({
       email: email,
       createdAt: firestore.FieldValue.serverTimestamp(),
+      fullName: displayName,
     });
 
     await sendVerificationEmail();
 
-    const userSnapshot = await userDocRef.get();
-    const userData = userSnapshot.data();
+    await auth().signOut();
 
-    const sanitizedUser = {
-      ...sanitizeUser(userCredential.user),
-      fullName: userData?.fullName,
-    };
+    // const userDocRef = firestore()
+    //   .collection("users")
+    //   .doc(userCredential.user.uid);
 
-    return { success: true, user: sanitizedUser };
+    // await userDocRef.set({
+    //   displayName,
+    //   email,
+    //   createdAt: firestore.FieldValue.serverTimestamp(),
+    // });
+
+    // const userSnapshot = await userDocRef.get();
+    // const userData = userSnapshot.data();
+
+    // const sanitizedUser = {
+    //   ...sanitizeUser(userCredential.user),
+    //   displayName: userData?.displayName,
+    // };
+
+    // return { success: true, user: sanitizedUser };
+    return {};
   } catch (error) {
     if (error instanceof Error) {
       return { success: false, error: error.message };
@@ -42,15 +66,16 @@ export const signUpWithEmailPassword = async (
   }
 };
 
-export const sanitizeUser = (user: any): User => {
+export const sanitizeUser = (user: FirebaseAuthTypes.User) => {
   return {
     uid: user.uid,
     email: user.email,
-    fullName: user.fullName,
+    displayName: user.displayName,
     photoURL: user.photoURL || "",
     emailVerified: user.emailVerified,
   };
 };
+
 export const sendVerificationEmail = async () => {
   const user = auth().currentUser;
   if (user) {

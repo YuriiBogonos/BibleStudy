@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { sanitizeUser } from "@/services/authServices/SignUpServive";
+import { User } from "@/types/User";
 
 interface AuthState {
-  user: any | null;
+  user: User | null;
   error: string | null;
 }
 
@@ -24,7 +25,7 @@ const authSlice = createSlice({
       state.error = action.payload;
     },
     signInSuccess(state, action: PayloadAction<any>) {
-      state.user = sanitizeUser(action.payload);
+      state.user = action.payload;
       state.error = null;
     },
     signInFailure(state, action: PayloadAction<string>) {

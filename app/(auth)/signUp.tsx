@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { Typography } from "@/types/Typography";
 import HomeGardenSvg from "@/assets/images/HomeGarden";
@@ -7,8 +7,25 @@ import GoogleIcon from "@/assets/images/GoogleIcon";
 import AppleIcon from "@/assets/images/AppleIcon";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import SignUpForm from "@/components/forms/SignUpForm";
+import { signInWithGoogleFunc } from "@/services/authServices/GoogleSignIn";
 
 const SignUp: FC = () => {
+  const [googleLoginLoading, setGoogleLoginLoading] = useState<boolean>(false);
+  const [appleLoginLoading, setAppleLoginLoading] = useState<boolean>(false);
+
+  const [firebaseError, setFirebaseError] = useState<string>("");
+
+  const signInWithGoogle = () => {
+    setGoogleLoginLoading(true);
+    setFirebaseError("");
+    signInWithGoogleFunc({ setGoogleLoginLoading, setFirebaseError });
+  };
+
+  const signInWithApple = async () => {
+    setAppleLoginLoading(true);
+    setFirebaseError("");
+  };
+
   return (
     <ScreenWrapper>
       <View style={styles.container}>
@@ -26,9 +43,8 @@ const SignUp: FC = () => {
           <AuthButton
             Icon={GoogleIcon}
             text="Sign up with Google"
-            onPress={() => {
-              console.log("Sign up with Google");
-            }}
+            onPress={signInWithGoogle}
+            isLoading={googleLoginLoading}
           />
           <AuthButton
             Icon={AppleIcon}
@@ -36,8 +52,15 @@ const SignUp: FC = () => {
             onPress={() => {
               console.log("Sign up with Apple");
             }}
+            isLoading={appleLoginLoading}
           />
         </View>
+
+        {firebaseError && (
+          <View>
+            <Text style={styles.errorText}>{firebaseError}</Text>
+          </View>
+        )}
 
         <Text style={[Typography.subheading, styles.text]}>or</Text>
         <SignUpForm />
@@ -52,6 +75,7 @@ const styles = StyleSheet.create({
   },
   title: {
     textAlign: "center",
+    marginTop: 10,
   },
   subtitle: {
     textAlign: "center",
@@ -69,6 +93,12 @@ const styles = StyleSheet.create({
   authButtons: {
     marginBottom: 24,
     paddingHorizontal: 20,
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    marginBottom: 16,
+    fontSize: 16,
   },
 });
 

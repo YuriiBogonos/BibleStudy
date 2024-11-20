@@ -1,5 +1,5 @@
 import React from "react";
-import { Tabs } from "expo-router";
+// import { Tab } from "expo-router";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
@@ -7,70 +7,89 @@ import TabIconHome from "@/assets/images/TabIconHome";
 import TabIconQuestions from "@/assets/images/TabIconQuestions";
 import TabAccountIcon from "@/assets/images/TabIconAccount";
 
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import MainScreen from "./home";
+import Questions from "./questions";
+import Account from "./account";
+import AccountSettings from "./accountSettings";
+import QuestionHistoryScreen from "./questionFullHistory";
+import SessionHistoryScreen from "./sessionFullHistory";
+import MultipleSession from "./multipleSession";
+
+const Tab = createBottomTabNavigator();
+
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
+    <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: useClientOnlyValue(false, true),
       }}
     >
-      <Tabs.Screen
+      <Tab.Screen
         name="home"
         options={{
           tabBarIcon: TabIconHome,
           title: "Home",
           headerShown: false,
         }}
+        component={MainScreen}
       />
-      <Tabs.Screen
+      <Tab.Screen
         name="questions"
         options={{
           title: "Questions",
           tabBarIcon: TabIconQuestions,
           headerShown: false,
         }}
+        component={Questions}
       />
-      <Tabs.Screen
+      <Tab.Screen
         name="account"
         options={{
           title: "Account",
           tabBarIcon: TabAccountIcon,
           headerShown: false,
         }}
+        component={Account}
       />
-      <Tabs.Screen
+      <Tab.Screen
         name="accountSettings"
         options={{
           headerShown: false,
           tabBarButton: () => null,
         }}
+        component={AccountSettings}
       />
-      <Tabs.Screen
+
+      <Tab.Screen
         name="questionFullHistory"
         options={{
           title: "Question History",
           tabBarButton: () => null,
           headerShown: false,
         }}
+        component={QuestionHistoryScreen}
       />
-      <Tabs.Screen
+      <Tab.Screen
         name="sessionFullHistory"
         options={{
           title: "Session History",
           tabBarButton: () => null,
           headerShown: false,
         }}
+        component={SessionHistoryScreen}
       />
-      <Tabs.Screen
+      <Tab.Screen
         name="multipleSession"
         options={{
           tabBarButton: () => null,
           headerShown: false,
         }}
+        component={MultipleSession}
       />
-    </Tabs>
+    </Tab.Navigator>
   );
 }

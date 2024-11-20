@@ -4,19 +4,20 @@ import {
   Question,
   createChatCompletion,
   questionGenerationPrompt,
-} from '@/api/openaiApi';
+} from "@/api/openaiApi";
 
 export interface User {
   uid: string;
-  email: string;
-  fullName: string;
+  email: string | null;
+  displayName: string;
   photoURL?: string;
   emailVerified: boolean;
   [key: string]: any;
 }
+
 // Генерація запитань
 export const generateQuestions = async (
-  sessionInfo: GenerateSessionPayload['sessionInfo'],
+  sessionInfo: GenerateSessionPayload["sessionInfo"],
   messages: Message[],
   model: string,
   maxTokens: number = 4000
@@ -25,7 +26,7 @@ export const generateQuestions = async (
     model,
     messages: [
       ...messages,
-      { role: 'user', content: questionGenerationPrompt(sessionInfo) },
+      { role: "user", content: questionGenerationPrompt(sessionInfo) },
     ],
     max_tokens: maxTokens,
   });
@@ -39,14 +40,14 @@ export const generateQuestions = async (
         const jsonResponse = JSON.parse(jsonMatch[1]);
         return jsonResponse.questions;
       } catch (error) {
-        console.error('Error parsing questions JSON:', error);
-        throw new Error('Failed to parse JSON response for questions');
+        console.error("Error parsing questions JSON:", error);
+        throw new Error("Failed to parse JSON response for questions");
       }
     } else {
-      console.error('No valid JSON found in response');
-      throw new Error('No valid JSON found in response');
+      console.error("No valid JSON found in response");
+      throw new Error("No valid JSON found in response");
     }
   }
 
-  throw new Error('Failed to generate questions');
+  throw new Error("Failed to generate questions");
 };
