@@ -1,64 +1,95 @@
 import React from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
-
+// import { Tab } from "expo-router";
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
 import { useClientOnlyValue } from "@/components/useClientOnlyValue";
+import TabIconHome from "@/assets/images/TabIconHome";
+import TabIconQuestions from "@/assets/images/TabIconQuestions";
+import TabAccountIcon from "@/assets/images/TabIconAccount";
 
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import MainScreen from "./home";
+import Questions from "./questions";
+import Account from "./account";
+import AccountSettings from "./accountSettings";
+import QuestionHistoryScreen from "./questionFullHistory";
+import SessionHistoryScreen from "./sessionFullHistory";
+import MultipleSession from "./multipleSession";
+
+const Tab = createBottomTabNavigator();
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <Tabs
+    <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         headerShown: useClientOnlyValue(false, true),
       }}
     >
-      <Tabs.Screen
+      <Tab.Screen
         name="home"
         options={{
+          tabBarIcon: TabIconHome,
           title: "Home",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <Pressable>
-                {({ pressed }) => (
-                  <FontAwesome
-                    name="info-circle"
-                    size={25}
-                    color={Colors[colorScheme ?? "light"].text}
-                    style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-                  />
-                )}
-              </Pressable>
-            </Link>
-          ),
+          headerShown: false,
         }}
+        component={MainScreen}
       />
-      <Tabs.Screen
+      <Tab.Screen
         name="questions"
         options={{
           title: "Questions",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: TabIconQuestions,
+          headerShown: false,
         }}
+        component={Questions}
       />
-      <Tabs.Screen
-        name="two"
+      <Tab.Screen
+        name="account"
         options={{
           title: "Account",
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          tabBarIcon: TabAccountIcon,
+          headerShown: false,
         }}
+        component={Account}
       />
-    </Tabs>
+      <Tab.Screen
+        name="accountSettings"
+        options={{
+          headerShown: false,
+          tabBarButton: () => null,
+        }}
+        component={AccountSettings}
+      />
+
+      <Tab.Screen
+        name="questionFullHistory"
+        options={{
+          title: "Question History",
+          tabBarButton: () => null,
+          headerShown: false,
+        }}
+        component={QuestionHistoryScreen}
+      />
+      <Tab.Screen
+        name="sessionFullHistory"
+        options={{
+          title: "Session History",
+          tabBarButton: () => null,
+          headerShown: false,
+        }}
+        component={SessionHistoryScreen}
+      />
+      <Tab.Screen
+        name="multipleSession"
+        options={{
+          tabBarButton: () => null,
+          headerShown: false,
+        }}
+        component={MultipleSession}
+      />
+    </Tab.Navigator>
   );
 }
