@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { sanitizeUser } from "@/services/authServices/SignUpServive";
 import { User } from "@/types/User";
 
 interface AuthState {
@@ -39,6 +38,11 @@ const authSlice = createSlice({
     signOutFailure(state, action: PayloadAction<string>) {
       state.error = action.payload;
     },
+    changeFullName(state, action: PayloadAction<string>) {
+      if (state.user) {
+        state.user.displayName = action.payload;
+      }
+    },
   },
 });
 
@@ -49,6 +53,7 @@ export const {
   signInFailure,
   signOutSuccess,
   signOutFailure,
+  changeFullName,
 } = authSlice.actions;
 
 export default authSlice.reducer;

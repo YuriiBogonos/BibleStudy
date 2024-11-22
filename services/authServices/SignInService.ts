@@ -1,5 +1,5 @@
 import auth from "@react-native-firebase/auth";
-import { sanitizeUser } from "@/services/authServices/SignUpServive";
+import { sanitizeUser } from "@/services/authServices/SignUpService";
 
 export const signInWithEmailPassword = async (
   email: string,
@@ -8,7 +8,7 @@ export const signInWithEmailPassword = async (
   try {
     const { user } = await auth().signInWithEmailAndPassword(email, password);
 
-    const sanitizedUser = sanitizeUser(user);
+    const sanitizedUser = sanitizeUser(user, user.displayName);
 
     return { success: true, user: sanitizedUser };
   } catch (error) {

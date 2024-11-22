@@ -2,8 +2,6 @@ import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 import firestore from "@react-native-firebase/firestore";
 
-// import { User } from "@/types/User";
-
 export const signUpWithEmailPassword = async (
   email: string,
   password: string,
@@ -66,11 +64,14 @@ export const signUpWithEmailPassword = async (
   }
 };
 
-export const sanitizeUser = (user: FirebaseAuthTypes.User) => {
+export const sanitizeUser = (
+  user: FirebaseAuthTypes.User,
+  displayName: string | null
+) => {
   return {
     uid: user.uid,
     email: user.email,
-    displayName: user.displayName,
+    displayName: displayName,
     photoURL: user.photoURL || "",
     emailVerified: user.emailVerified,
   };

@@ -16,7 +16,7 @@ import { PortalHost, PortalProvider } from "@gorhom/portal";
 import { useColorScheme } from "@/components/useColorScheme";
 import { RootState, store } from "@/store/store";
 import { signInSuccess } from "@/store/slices/auhtSlice";
-import { sanitizeUser } from "@/services/authServices/SignUpServive";
+import { sanitizeUser } from "@/services/authServices/SignUpService";
 import LoadingScreen from "./loadingScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import AuthLayout from "./(auth)/_layout";
@@ -25,7 +25,8 @@ import SessionsLayout from "./(sessions)/_layout";
 
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { WEB_CLIENT_ID } from "@/constants/keys";
-import { useRouter } from "expo-router";
+
+import { getUserInfoByUid } from "@/services/getUserInfoByUid";
 
 // import { Redirect, , router } from "expo-router";
 
@@ -73,13 +74,12 @@ export default function RootLayout() {
 const RootLayoutNav = () => {
   const colorScheme = useColorScheme();
   const dispatch = useDispatch();
-  const router = useRouter();
   const user = useSelector((state: RootState) => state.auth.user);
 
   const [appLoading, setAppLoading] = useState(true);
 
   useEffect(() => {
-    const onAuthStateChanged = (user: FirebaseAuthTypes.User | null) => {
+    const onAuthStateChanged = async (user: FirebaseAuthTypes.User | null) => {
       if (!user) {
         SplashScreen.hideAsync();
         setAppLoading(false);
@@ -87,7 +87,9 @@ const RootLayoutNav = () => {
       }
 
       if (user.emailVerified) {
-        dispatch(signInSuccess(sanitizeUser(user)));
+        const userInfoFromDatabase = await getUserInfoByUid(user.uid);
+
+        dispatch(signInSuccess(sanitizeUser(user, userInfoFromDatabase!)));
         SplashScreen.hideAsync();
         setAppLoading(false);
         return;
