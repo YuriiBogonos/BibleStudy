@@ -10,6 +10,7 @@ import {
 import { useDispatch } from "react-redux";
 import { router } from "expo-router";
 import { Formik, FormikHelpers } from "formik";
+import { FirebaseError } from "@firebase/util";
 
 import { InputType } from "@/components/ui/CustomInput/types";
 import CustomInput from "@/components/ui/CustomInput/CustomInput";
@@ -21,6 +22,7 @@ import { signInWithEmailPassword } from "@/services/authServices/SignInService";
 import { signInFailure, signInSuccess } from "@/store/slices/auhtSlice";
 import { formatFirebaseErrorMessage } from "@/services/formatFirebaseError";
 import { SignInSchema } from "@/validation/SignInSchema";
+import { auth } from "@/config/config";
 
 interface ISignInFormValues {
   email: string;
@@ -35,8 +37,13 @@ const initialFormValue: ISignInFormValues = {
 const SignInForm: FC = () => {
   const dispatch = useDispatch();
 
+  const user = auth().currentUser;
+
   const [error, setError] = useState<string | null>(null);
   const [iaLoading, setLoading] = useState<boolean>(false);
+
+  const [canResend, setCanResend] = useState(true);
+  const [timer, setTimer] = useState(0);
 
   const handleSignIn = async (
     values: ISignInFormValues,
@@ -52,7 +59,7 @@ const SignInForm: FC = () => {
       const result = await signInWithEmailPassword(email, password);
 
       if (result.error) {
-        const errorMessage = result.error ?? "An unknown error occurred QQAAAA";
+        const errorMessage = result.error ?? "An unknown error occurred";
         dispatch(signInFailure(errorMessage));
         setError(errorMessage);
         setSubmitting(false);
@@ -82,6 +89,66 @@ const SignInForm: FC = () => {
       setError("An unexpected error occurred.");
       console.error("error in signInWithEmailPassword", err);
       setLoading(false);
+    }
+  };
+
+  const startCooldown = () => {
+    const cooldownTime = 60;
+    setCanResend(false);
+    setTimer(cooldownTime);
+
+    const interval = setInterval(() => {
+      setTimer((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval);
+          setCanResend(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  const resendVerificationEmail = async () => {
+    try {
+      const user = auth().currentUser;
+
+      if (user && !user.emailVerified) {
+        await user.sendEmailVerification();
+        Alert.alert("Success", "A new verification email has been sent.");
+        startCooldown();
+      } else {
+        Alert.alert(
+          "Error",
+          "Your email is already verified or no user is logged in."
+        );
+      }
+    } catch (error) {
+      if (error instanceof FirebaseError) {
+        switch (error.code) {
+          case "auth/too-many-requests":
+            Alert.alert(
+              "Error",
+              "Too many requests. Please wait before trying again."
+            );
+            break;
+          default:
+            Alert.alert(
+              "Error",
+              formatFirebaseErrorMessage(error.message) ||
+                "An unexpected error occurred."
+            );
+        }
+      } else if (error instanceof Error) {
+        Alert.alert(
+          "Error",
+          formatFirebaseErrorMessage(error.message) ||
+            "An unexpected error occurred."
+        );
+      } else {
+        console.error("Unknown error type:", error);
+        Alert.alert("Error", "Something went wrong.");
+      }
     }
   };
 
@@ -142,6 +209,19 @@ const SignInForm: FC = () => {
             <Text style={styles.errorText}>
               {formatFirebaseErrorMessage(error)}
             </Text>
+          )}
+
+          {user && (
+            <TouchableOpacity
+              onPress={resendVerificationEmail}
+              disabled={!canResend}
+            >
+              <Text style={[Typography.smallRegular, styles.loginText]}>
+                {canResend
+                  ? "Don`t get verification code? Click to resend again."
+                  : `Please wait ${timer}s before resending.`}
+              </Text>
+            </TouchableOpacity>
           )}
 
           <TouchableOpacity onPress={() => router.replace("/signUp")}>

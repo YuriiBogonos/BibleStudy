@@ -17,7 +17,7 @@ import CustomInput from "@/components/ui/CustomInput/CustomInput";
 import { Colors } from "@/types/Colors";
 import { Typography } from "@/types/Typography";
 
-import { signUpWithEmailPassword } from "@/services/authServices/SignUpServive";
+import { signUpWithEmailPassword } from "@/services/authServices/SignUpService";
 import { SignUpSchema } from "@/validation/SignUpSchema";
 
 import { formatFirebaseErrorMessage } from "@/services/formatFirebaseError";
@@ -83,8 +83,7 @@ const SignUpForm: React.FC = () => {
   return (
     <Formik
       initialValues={initialValues}
-      // TODO: return validationSchema
-      // validationSchema={SignUpSchema}
+      validationSchema={SignUpSchema}
       onSubmit={handleSignUp}
     >
       {({
