@@ -1,8 +1,23 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import AnswersSession from "./answersSession";
 import VerseResults from "./questionResult";
+import { INavigationData } from "@/components/forms/SessionForm";
 
-const Stack = createStackNavigator();
+export type RootStackParamList = {
+  "(tabs)": undefined;
+  "(sessions)": {
+    screen: keyof SessionsStackParamList;
+    params?: SessionsStackParamList["answersSession"];
+  };
+  "(auth)": undefined;
+};
+
+export type SessionsStackParamList = {
+  answersSession: { sessionData: INavigationData };
+  questionResult: undefined;
+};
+
+const Stack = createStackNavigator<SessionsStackParamList>();
 
 export default function SessionsLayout() {
   return (

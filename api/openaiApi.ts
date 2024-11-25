@@ -1,15 +1,15 @@
-import OpenAI from 'openai';
-import { BaseQueryFn } from '@reduxjs/toolkit/query';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
-import { generateQuestions } from '@/types/User';
+import OpenAI from "openai";
+import { BaseQueryFn } from "@reduxjs/toolkit/query";
+import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
+import { generateQuestions } from "@/types/User";
 
-export type Role = 'user' | 'system' | 'assistant';
+export type Role = "user" | "system" | "assistant";
 export type FinishReason =
-  | 'stop'
-  | 'length'
-  | 'tool_calls'
-  | 'content_filter'
-  | 'function_call';
+  | "stop"
+  | "length"
+  | "tool_calls"
+  | "content_filter"
+  | "function_call";
 
 export interface Message {
   role: Role;
@@ -35,7 +35,7 @@ export interface GenerateSessionPayload extends GenerateResponsePayload {
 
 interface ChatCompletionChoice {
   index: number;
-  message: { role: 'assistant'; content: string | null };
+  message: { role: "assistant"; content: string | null };
   finish_reason: FinishReason;
 }
 
@@ -103,7 +103,7 @@ const mapResponseToCompletion = (response: ChatCompletion): ChatCompletion => ({
   choices: response.choices.map((choice) => ({
     index: choice.index,
     message: {
-      role: choice.message.role as 'assistant',
+      role: choice.message.role as "assistant",
       content: choice.message.content,
     },
     finish_reason: choice.finish_reason as FinishReason,
@@ -114,14 +114,14 @@ const mapResponseToCompletion = (response: ChatCompletion): ChatCompletion => ({
 // Функція для обробки помилок
 const handleError = (error: unknown): FetchBaseQueryError => {
   return {
-    status: error instanceof OpenAI.APIError ? error.status : 'CUSTOM_ERROR',
-    data: error instanceof Error ? error.message : 'Unknown error',
+    status: error instanceof OpenAI.APIError ? error.status : "CUSTOM_ERROR",
+    data: error instanceof Error ? error.message : "Unknown error",
   } as FetchBaseQueryError;
 };
 
 // Промти
 export const questionGenerationPrompt = (
-  sessionInfo: GenerateSessionPayload['sessionInfo']
+  sessionInfo: GenerateSessionPayload["sessionInfo"]
 ) => `
 You are an experienced Christian pastor. Please provide exactly ${
   sessionInfo.numberOfQuestions
@@ -153,7 +153,7 @@ Please format the response as valid JSON without any extra text. The JSON should
           "verses": "Verse numbers",
           "full_verse": "Full text of the verse"
         }`
-            : ''
+            : ""
         }
       ]
     }
@@ -186,7 +186,7 @@ Format the response as valid JSON without any extra text. The JSON should look l
       "verses": "Verse numbers",
       "full_verse": "Full text of the verse"
     }`
-        : ''
+        : ""
     }
   ]
 }
@@ -206,7 +206,7 @@ const generateAnswer = async (
     messages: [
       ...messages,
       {
-        role: 'user',
+        role: "user",
         content: answerPrompt(question, verses, preferredBible, complexity),
       },
     ],
@@ -223,16 +223,16 @@ const generateAnswer = async (
         const jsonResponse = JSON.parse(jsonMatch[1]);
         return jsonResponse;
       } catch (error) {
-        console.error('Error parsing answer JSON:', error);
-        throw new Error('Failed to parse JSON response for answer');
+        console.error("Error parsing answer JSON:", error);
+        throw new Error("Failed to parse JSON response for answer");
       }
     } else {
-      console.error('No valid JSON found in response');
-      throw new Error('No valid JSON found in response');
+      console.error("error in generateAnswer. No valid JSON found in response");
+      throw new Error("No valid JSON found in response");
     }
   }
 
-  throw new Error('Failed to generate answer');
+  throw new Error("Failed to generate answer");
 };
 
 // Основна функція запиту OpenAI
@@ -242,10 +242,10 @@ const openAiBaseQuery: BaseQueryFn<
   FetchBaseQueryError
 > = async (payload) => {
   try {
-    console.log('Base query payload:', payload);
+    console.log("Base query payload:", payload);
 
-    if ('sessionInfo' in payload) {
-      console.log('Generating session...');
+    if ("sessionInfo" in payload) {
+      console.log("Generating session...");
       const sessionPayload = payload as GenerateSessionPayload;
       const questions = await generateQuestions(
         sessionPayload.sessionInfo,
@@ -285,7 +285,7 @@ const openAiBaseQuery: BaseQueryFn<
 
     return { data: answerResponse };
   } catch (error) {
-    console.error('Error in openAiBaseQuery:', error);
+    console.error("Error in openAiBaseQuery:", error);
     return { error: handleError(error) };
   }
 };

@@ -72,6 +72,7 @@ export const useGetUserSessions = () => {
         .where("userId", "==", userId)
         .orderBy("createdAt", "desc")
         .get();
+
       console.log("querySnapshot ===>", querySnapshot);
 
       return querySnapshot.docs.map((doc) => ({

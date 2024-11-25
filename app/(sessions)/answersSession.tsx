@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -7,31 +7,34 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Question } from "@/api/openaiApi";
+import { AntDesign } from "@expo/vector-icons";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+
 import CustomHeader from "@/components/ui/CustomHeader";
+import SessionNavigation from "@/components/SessionsNavigation";
+import TagSelector from "@/components/ui/TagSelector";
+import CustomModal from "@/components/ui/CustomModal";
+
+import { TopicColor } from "@/types/TopicColor";
 import { Colors } from "@/types/Colors";
 import { Typography } from "@/types/Typography";
-import { BibleVerse, Question } from "@/api/openaiApi";
-import { AntDesign } from "@expo/vector-icons";
+
 import NivIcon from "@/assets/images/NivIcon";
 import ProcessIcon from "@/assets/images/ProcessIcon";
-import TagSelector from "@/components/ui/TagSelector";
-import SessionNavigation from "@/components/SessionsNavigation";
-import { TopicColor } from "@/types/TopicColor";
+import { SessionsStackParamList } from "./_layout";
+
+export type AnswersSessionRouteProp = RouteProp<
+  SessionsStackParamList,
+  "answersSession"
+>;
 
 export default function AnswersSession() {
-  const router = useRouter();
-  const { sessionData } = useLocalSearchParams();
-  const parsedSessionData = sessionData
-    ? JSON.parse(sessionData as string)
-    : null;
+  const navigation = useNavigation<any>();
 
-  useEffect(() => {
-    console.log(
-      "JSON.stringify parsedSessionData ===>",
-      JSON.stringify(parsedSessionData, null, 2)
-    );
-  }, [parsedSessionData]);
+  const route = useRoute<AnswersSessionRouteProp>();
+  const { sessionData: parsedSessionData } = route.params;
+
   const initialFocusTopics = [
     "Empathy",
     "Love",
@@ -54,6 +57,9 @@ export default function AnswersSession() {
 
     return colors;
   });
+
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
   const questions: Question[] = parsedSessionData?.questions || [];
   const preferredBible = parsedSessionData?.preferredBible || "N/A";
   const complexity = parsedSessionData?.complexity || "N/A";
@@ -80,12 +86,8 @@ export default function AnswersSession() {
   };
 
   const handleFinish = () => {
-    setIsLoading(true);
-    console.log("Session Finished");
-    setTimeout(() => {
-      setIsLoading(false);
-      router.replace("/(tabs)/multipleSession");
-    }, 1000);
+    setIsLoading(false);
+    setModalVisible(true);
   };
 
   const toggleExpand = (index: number) => {
@@ -177,6 +179,18 @@ export default function AnswersSession() {
           finishText="Finish"
         />
       </View>
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={() => {
+          setModalVisible(false);
+          navigation.navigate("multipleSession");
+        }}
+        message="Would you like to end the session?"
+        confirmText="Yes, thanks"
+        cancelText="Cancel"
+        showWarning={false}
+      />
     </SafeAreaView>
   );
 }
