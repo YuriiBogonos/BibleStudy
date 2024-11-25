@@ -1,24 +1,29 @@
 import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Formik, FormikHelpers } from "formik";
+import { useNavigation } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+
 import CustomInput from "@/components/ui/CustomInput/CustomInput";
 import { InputType } from "@/components/ui/CustomInput/types";
 import CustomSelect from "@/components/ui/CustomSelect";
 import Counter from "@/components/ui/Counter";
 import TagSelector from "@/components/ui/TagSelector";
+import CustomButton from "@/components/ui/CustomButton";
+
+import NewSessionIcon from "@/assets/images/NewSessionIcon";
 import { SessionsGenerationSchema } from "@/validation/SessionsGenerationSchema";
 import { Typography } from "@/types/Typography";
-import CustomButton from "@/components/ui/CustomButton";
-import NewSessionIcon from "@/assets/images/NewSessionIcon";
-import { useRouter } from "expo-router";
-import { GenerateSessionPayload } from "@/api/openaiApi";
-import { useGenerateSessionMutation } from "@/api/baseQuery";
 import { TopicColor } from "@/types/TopicColor";
+
+import { GenerateSessionPayload, Question } from "@/api/openaiApi";
+import { useGenerateSessionMutation } from "@/api/baseQuery";
 import {
   CreateSessionDTO,
   useCreateSession,
 } from "@/services/SessionHistoryService";
 import { auth } from "@/config/config";
+import { RootStackParamList } from "@/app/(sessions)/_layout";
 
 interface FormValues {
   sessionName: string;
@@ -28,6 +33,19 @@ interface FormValues {
   preferredBible: string;
   complexity: string;
 }
+
+export interface INavigationData {
+  id: string;
+  focusTopic: string;
+  createdAt: number;
+  sessionName: string;
+  preferredBible: string;
+  complexity: string;
+  questions: Question[];
+  answers: string[];
+}
+
+type NavigationProp = StackNavigationProp<RootStackParamList, "(sessions)">;
 
 const initialFocusTopics = [
   "Empathy",
@@ -44,10 +62,11 @@ const ComplexityLevels = ["Study", "Meditation", "Devotional"];
 
 const SessionForm: React.FC = () => {
   const [generateSession] = useGenerateSessionMutation();
-  const router = useRouter();
-  const [availableTopics, setAvailableTopics] =
-    useState<string[]>(initialFocusTopics);
+
+  const navigation = useNavigation<NavigationProp>();
+
   const createSession = useCreateSession();
+
   const [tagColors, setTagColors] = useState<{ [key: string]: string }>(() => {
     const colors: { [key: string]: string } = {};
     const topicColorValues = Object.values(TopicColor);
@@ -58,6 +77,10 @@ const SessionForm: React.FC = () => {
 
     return colors;
   });
+  const [availableTopics, setAvailableTopics] =
+    useState<string[]>(initialFocusTopics);
+  const [openAiError, setOpenAiError] = useState<string>("");
+
   const initialValues: FormValues = {
     sessionName: "",
     numberOfQuestions: 1,
@@ -68,10 +91,13 @@ const SessionForm: React.FC = () => {
   };
 
   const handleAddTag = (newTag: string, color: string) => {
-    setAvailableTopics((prevTopics) => [...prevTopics, newTag]);
+    setAvailableTopics((prevTopics) => [
+      ...prevTopics,
+      newTag.charAt(0).toUpperCase() + newTag.slice(1),
+    ]);
     setTagColors((prevColors) => ({
       ...prevColors,
-      [newTag]: color,
+      [newTag.charAt(0).toUpperCase() + newTag.slice(1)]: color,
     }));
   };
 
@@ -80,6 +106,8 @@ const SessionForm: React.FC = () => {
     { setSubmitting, resetForm }: FormikHelpers<FormValues>
   ) => {
     try {
+      setOpenAiError("");
+
       const currentUser = auth().currentUser;
 
       if (!currentUser) {
@@ -141,15 +169,13 @@ const SessionForm: React.FC = () => {
       // Очищаємо форму
       resetForm();
 
-      // Навігація на сторінку відповідей
-      router.push({
-        pathname: "/(sessions)/answersSession",
-        params: {
-          sessionData: JSON.stringify(navigationData),
-        },
+      navigation.navigate("(sessions)", {
+        screen: "answersSession",
+        params: { sessionData: navigationData },
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error during session generation:", error);
+      setOpenAiError(error.data as string);
     } finally {
       setSubmitting(false);
     }
@@ -308,8 +334,27 @@ const SessionForm: React.FC = () => {
                 }}
                 Icon={NewSessionIcon}
                 disabled={isSubmitting || !isValid}
+                isLoading={isSubmitting}
               />
+
+              {openAiError && (
+                <View>
+                  <Text style={styles.openAiResultErrorText}>
+                    {openAiError}
+                  </Text>
+                </View>
+              )}
             </View>
+            {/* <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("(sessions)", {
+                  screen: "answersSession",
+                  params: { sessionData: "navigation data" },
+                })
+              }
+            >
+              <Text>AAAAA</Text>
+            </TouchableOpacity> */}
           </ScrollView>
         );
       }}
@@ -347,6 +392,12 @@ const styles = StyleSheet.create({
   TagSelector: {
     flexWrap: "wrap",
     flexDirection: "row",
+  },
+  openAiResultErrorText: {
+    fontSize: 16,
+    color: "red",
+    textAlign: "center",
+    marginTop: 10,
   },
 });
 

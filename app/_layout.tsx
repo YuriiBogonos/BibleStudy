@@ -21,14 +21,12 @@ import LoadingScreen from "./loadingScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import AuthLayout from "./(auth)/_layout";
 import TabLayout from "./(tabs)/_layout";
-import SessionsLayout from "./(sessions)/_layout";
+import SessionsLayout, { RootStackParamList } from "./(sessions)/_layout";
 
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { WEB_CLIENT_ID } from "@/constants/keys";
 
 import { getUserInfoByUid } from "@/services/getUserInfoByUid";
-
-// import { Redirect, , router } from "expo-router";
 
 export const unstable_settings = {
   initialRouteName: "home",
@@ -36,7 +34,7 @@ export const unstable_settings = {
 
 SplashScreen.preventAutoHideAsync();
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 // TODO: change type of safety data about user after google signin
 

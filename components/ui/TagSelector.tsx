@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,8 @@ import {
 import { Colors } from "@/types/Colors";
 import { Typography } from "@/types/Typography";
 import { Ionicons } from "@expo/vector-icons";
+import { Formik, FormikHelpers } from "formik";
+import { AddNewTagSchema } from "@/validation/AddNewTagSchema";
 
 interface TagSelectorProps {
   tags: string[] | string;
@@ -20,6 +22,14 @@ interface TagSelectorProps {
   style?: any;
 }
 
+interface IFormValues {
+  tagName: string;
+}
+
+const initialValues = {
+  tagName: "",
+};
+
 const TagSelector: React.FC<TagSelectorProps> = ({
   tags,
   selectedTag,
@@ -29,7 +39,6 @@ const TagSelector: React.FC<TagSelectorProps> = ({
   style,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [newTag, setNewTag] = useState("");
 
   const tagArray = Array.isArray(tags) ? tags : [tags];
 
@@ -39,77 +48,100 @@ const TagSelector: React.FC<TagSelectorProps> = ({
     return colorOptions[Math.floor(Math.random() * colorOptions.length)];
   };
 
-  const handleAddTag = () => {
-    if (newTag.trim()) {
+  const handleAddTag = (
+    values: IFormValues,
+    { resetForm }: { resetForm: FormikHelpers<IFormValues>["resetForm"] }
+  ) => {
+    if (values.tagName.trim()) {
       const randomColor = getRandomColor();
+
       if (onAddTag) {
-        onAddTag(newTag, randomColor);
+        onAddTag(values.tagName, randomColor);
       }
-      setNewTag("");
+
+      resetForm();
       setModalVisible(false);
     }
   };
 
   return (
-    <View style={[styles.tagContainer, style]}>
-      {tagArray.map((tag) => {
-        const isSelected = selectedTag === tag;
-        const backgroundColor = tagColors[tag] || Colors.LightGray;
+    <Formik
+      initialValues={initialValues}
+      validationSchema={AddNewTagSchema}
+      onSubmit={handleAddTag}
+    >
+      {({ handleChange, handleSubmit, values, errors, touched }) => (
+        <View style={[styles.tagContainer, style]}>
+          {tagArray.map((tag) => {
+            const isSelected = selectedTag === tag;
+            const backgroundColor = tagColors[tag] || Colors.LightGray;
 
-        return (
-          <TouchableOpacity
-            key={tag}
-            style={[
-              styles.tag,
-              { backgroundColor },
-              isSelected && styles.tagSelected,
-            ]}
-            onPress={() => onTagPress(tag)}
-          >
-            <Text style={[Typography.bodyRegular, styles.tagText]}>{tag}</Text>
-          </TouchableOpacity>
-        );
-      })}
+            return (
+              <TouchableOpacity
+                key={tag}
+                style={[
+                  styles.tag,
+                  { backgroundColor },
+                  isSelected && styles.tagSelected,
+                ]}
+                onPress={() => onTagPress(tag)}
+              >
+                <Text style={[Typography.bodyRegular, styles.tagText]}>
+                  {tag}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
 
-      {onAddTag && (
-        <TouchableOpacity
-          style={[styles.tag, styles.addTagButton]}
-          onPress={() => setModalVisible(true)}
-        >
-          <Ionicons name="add" size={20} color={Colors.Black} />
-        </TouchableOpacity>
-      )}
-
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Add New Tag</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter tag name"
-              value={newTag}
-              onChangeText={setNewTag}
-            />
-            <TouchableOpacity style={styles.addButton} onPress={handleAddTag}>
-              <Text style={styles.addButtonText}>Add Tag</Text>
-            </TouchableOpacity>
+          {onAddTag && (
             <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => setModalVisible(false)}
+              style={[styles.tag, styles.addTagButton]}
+              onPress={() => setModalVisible(true)}
             >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Ionicons name="add" size={20} color={Colors.Black} />
             </TouchableOpacity>
-          </View>
+          )}
+
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(!modalVisible);
+            }}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContainer}>
+                <Text style={styles.modalTitle}>Add New Tag</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter tag name"
+                  value={values.tagName}
+                  onChangeText={handleChange("tagName")}
+                />
+                {errors.tagName && (
+                  <Text style={styles.inputErrorText}>{errors.tagName}</Text>
+                )}
+
+                <TouchableOpacity
+                  style={styles.addButton}
+                  onPress={() => handleSubmit()}
+                  disabled={!!errors.tagName}
+                >
+                  <Text style={styles.addButtonText}>Add Tag</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </Modal>
         </View>
-      </Modal>
-    </View>
+      )}
+    </Formik>
   );
 };
 
@@ -165,7 +197,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     backgroundColor: Colors.LightGray,
-    marginBottom: 20,
     borderWidth: 1,
     borderColor: Colors.DarkGray,
   },
@@ -175,6 +206,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     alignItems: "center",
     marginBottom: 10,
+    marginTop: 14,
   },
   addButtonText: {
     color: Colors.White,
@@ -188,6 +220,11 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     color: Colors.Red,
     fontWeight: "bold",
+  },
+  inputErrorText: {
+    textAlign: "left",
+    color: "red",
+    marginTop: 8,
   },
 });
 

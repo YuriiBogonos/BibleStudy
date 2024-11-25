@@ -1,12 +1,19 @@
-import React, { FC } from 'react';
-import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
-import { Colors } from '@/types/Colors';
+import React, { FC } from "react";
+import {
+  TouchableOpacity,
+  Text,
+  StyleSheet,
+  View,
+  ActivityIndicator,
+} from "react-native";
+import { Colors } from "@/types/Colors";
 
 interface CustomButtonProps {
   Icon?: FC;
   text: string;
   onPress: () => void;
   disabled?: boolean;
+  isLoading?: boolean;
 }
 
 const CustomButton: FC<CustomButtonProps> = ({
@@ -14,6 +21,7 @@ const CustomButton: FC<CustomButtonProps> = ({
   text,
   onPress,
   disabled = false,
+  isLoading,
 }) => {
   return (
     <TouchableOpacity
@@ -27,6 +35,11 @@ const CustomButton: FC<CustomButtonProps> = ({
           {text}
         </Text>
       </View>
+      {isLoading && (
+        <View style={styles.loader}>
+          <ActivityIndicator color={"black"} />
+        </View>
+      )}
     </TouchableOpacity>
   );
 };
@@ -36,25 +49,31 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.DarkBlue,
     borderRadius: 50,
     paddingVertical: 15,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 10,
   },
   buttonDisabled: {
-    backgroundColor: Colors.DarkBlue + '80',
+    backgroundColor: Colors.DarkBlue + "80",
     opacity: 0.7,
   },
   buttonText: {
     color: Colors.White,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   textDisabled: {
     opacity: 0.7,
   },
   buttonFlex: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 5,
+    position: "relative",
+  },
+  loader: {
+    position: "absolute",
+    top: 16,
+    right: 20,
   },
 });
 

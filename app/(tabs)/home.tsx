@@ -18,11 +18,13 @@ import PlusIconButton from "@/assets/images/PlusIconButton";
 import { RootState } from "@/store/store";
 
 export default function MainScreen() {
-  const user = useSelector((state: RootState) => state.auth.user);
   const router = useRouter();
   const getUserSessions = useGetUserSessions();
+
+  const user = useSelector((state: RootState) => state.auth.user);
+
   const [sessions, setSessions] = useState<Session[]>([]);
-  console.log("sessions ===>", sessions);
+
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -38,7 +40,7 @@ export default function MainScreen() {
         setError(null);
 
         const firestoreSessions = await getUserSessions(user.uid);
-        console.log("firestoreSessions ===>", firestoreSessions);
+
         const convertedSessions = firestoreSessions.map((firestoreSession) => ({
           id: firestoreSession.id,
           title: firestoreSession.sessionName,
