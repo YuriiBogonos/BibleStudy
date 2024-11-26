@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import { router, useLocalSearchParams } from "expo-router";
+import { useNavigation } from "expo-router";
 import { Typography } from "@/types/Typography";
 import { Colors } from "@/types/Colors";
 import CustomHeader from "@/components/ui/CustomHeader";
@@ -15,17 +15,30 @@ import { AntDesign } from "@expo/vector-icons";
 import SessionNavigation from "@/components/SessionsNavigation";
 import NivIcon from "@/assets/images/NivIcon";
 import ProcessIcon from "@/assets/images/ProcessIcon";
+import { RouteProp, useRoute } from "@react-navigation/native";
+import { SessionsStackParamList } from "./_layout";
+import CustomModal from "@/components/ui/CustomModal";
+
+export type QuestionsRouteProp = RouteProp<
+  SessionsStackParamList,
+  "questionResult"
+>;
 
 const VerseResults = () => {
-  const { verses, question, preferredBible, complexity } =
-    useLocalSearchParams();
+  const navigation = useNavigation<any>();
+
+  const { params } = useRoute<QuestionsRouteProp>();
+  const { complexity, preferredBible, question, verses } = params.questionsData;
+
   const [expandedVerses, setExpandedVerses] = useState<boolean[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
   const parsedVerses: any[] = Array.isArray(verses)
     ? JSON.parse(verses[0])
     : verses
-      ? JSON.parse(verses)
-      : [];
+    ? JSON.parse(verses)
+    : [];
 
   const toggleExpand = (index: number) => {
     const newExpandedVerses = [...expandedVerses];
@@ -34,13 +47,8 @@ const VerseResults = () => {
   };
 
   const handleFinish = () => {
-    setIsLoading(true);
-    console.log("Session Finished");
-
-    setTimeout(() => {
-      setIsLoading(false);
-      router.replace("/(tabs)/questions");
-    }, 1000);
+    setIsLoading(false);
+    setModalVisible(true);
   };
 
   return (
@@ -107,6 +115,18 @@ const VerseResults = () => {
           finishText="Finish"
         />
       </View>
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={() => {
+          setModalVisible(false);
+          navigation.navigate("questions");
+        }}
+        message="Would you like to end the session?"
+        confirmText="Yes, thanks"
+        cancelText="Cancel"
+        showWarning={false}
+      />
     </SafeAreaView>
   );
 };
@@ -120,7 +140,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    paddingVertical: 15,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
   },
   question: {
     borderRadius: 8,
