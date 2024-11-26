@@ -73,8 +73,6 @@ export const useGetUserSessions = () => {
         .orderBy("createdAt", "desc")
         .get();
 
-      console.log("querySnapshot ===>", querySnapshot);
-
       return querySnapshot.docs.map((doc) => ({
         ...(doc.data() as FirestoreSession),
         id: doc.id,

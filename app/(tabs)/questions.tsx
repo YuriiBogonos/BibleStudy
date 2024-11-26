@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from "react-native";
 import { Colors } from "@/types/Colors";
 import CustomInput from "../../components/ui/CustomInput/CustomInput";
 import CustomSelect from "../../components/ui/CustomSelect";
@@ -12,7 +18,9 @@ import { QuestionsGenerationSchema } from "@/validation/QuestionsGenerationSchem
 import Counter from "@/components/ui/Counter";
 import HistoryList from "@/components/ui/HistoryList/HistoryList";
 import { useGenerateResponseMutation } from "@/api/baseQuery";
-import { useRouter } from "expo-router";
+import { useNavigation, useRouter } from "expo-router";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../(sessions)/_layout";
 
 interface FormValues {
   question: string;
@@ -21,10 +29,22 @@ interface FormValues {
   complexity: string;
 }
 
+export interface IQuestionNavigationData {
+  verses: string;
+  question: string;
+  preferredBible: string;
+  complexity: string;
+}
+
+type NavigationProp = StackNavigationProp<RootStackParamList, "(sessions)">;
+
 export default function Questions() {
+  const navigation = useNavigation<NavigationProp>();
+
   const [generateResponse] = useGenerateResponseMutation();
+
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const initialValues: FormValues = {
     question: "",
@@ -35,10 +55,11 @@ export default function Questions() {
 
   const handleSubmit = async (
     values: FormValues,
-    { resetForm }: FormikHelpers<FormValues>,
+    { resetForm }: FormikHelpers<FormValues>
   ) => {
     try {
       setError(null);
+      setIsLoading(true);
 
       const result = await generateResponse({
         model: "gpt-4",
@@ -62,24 +83,32 @@ export default function Questions() {
         const verses = result.data.verses || [];
         const serializedVersesData = JSON.stringify(verses);
         console.log("Serialized verses data:", serializedVersesData);
-        router.replace({
-          pathname: "/(sessions)/questionResult",
-          params: {
-            verses: serializedVersesData,
-            question: values.question,
-            preferredBible: values.preferredBible, // Додаємо preferredBible
-            complexity: values.complexity, // Додаємо complexity
-          },
+
+        setIsLoading(false);
+
+        const questionsData: IQuestionNavigationData = {
+          verses: serializedVersesData,
+          question: values.question,
+          preferredBible: values.preferredBible,
+          complexity: values.complexity,
+        };
+
+        navigation.navigate("(sessions)", {
+          screen: "questionResult",
+          params: { questionsData },
         });
 
         resetForm();
       } else {
+        console.log("data is not a data", error);
         throw new Error("Unexpected API response structure");
       }
     } catch (error) {
       console.error("Error generating response:", error);
+      setIsLoading(false);
+
       setError(
-        "An error occurred while generating the response. Please try again.",
+        "An error occurred while generating the response. Please try again."
       );
     }
   };
@@ -169,10 +198,16 @@ export default function Questions() {
             <TouchableOpacity
               onPress={() => handleSubmit()}
               style={styles.submitButton}
+              disabled={isLoading}
             >
               <Text style={[Typography.bodyMedium, styles.submitButtonText]}>
                 + Submit
               </Text>
+              {isLoading && (
+                <View style={styles.loader}>
+                  <ActivityIndicator color={"black"} />
+                </View>
+              )}
             </TouchableOpacity>
             {error && <Text style={styles.errorText}>{error}</Text>}
 
@@ -221,5 +256,10 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 12,
     marginTop: 5,
+  },
+  loader: {
+    position: "absolute",
+    top: 14,
+    right: 20,
   },
 });
