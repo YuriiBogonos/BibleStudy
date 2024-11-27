@@ -19,7 +19,7 @@ import { Colors } from "@/types/Colors";
 import { Typography } from "@/types/Typography";
 
 import { signInWithEmailPassword } from "@/services/authServices/SignInService";
-import { signInFailure, signInSuccess } from "@/store/slices/auhtSlice";
+import { signInFailure, signInSuccess } from "@/store/slices/authSlice";
 import { formatFirebaseErrorMessage } from "@/services/formatFirebaseError";
 import { SignInSchema } from "@/validation/SignInSchema";
 import { auth } from "@/config/config";

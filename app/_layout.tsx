@@ -15,7 +15,7 @@ import { PortalHost, PortalProvider } from "@gorhom/portal";
 
 import { useColorScheme } from "@/components/useColorScheme";
 import { RootState, store } from "@/store/store";
-import { signInSuccess } from "@/store/slices/auhtSlice";
+import { signInSuccess } from "@/store/slices/authSlice";
 import { sanitizeUser } from "@/services/authServices/SignUpService";
 import LoadingScreen from "./loadingScreen";
 import { createStackNavigator } from "@react-navigation/stack";

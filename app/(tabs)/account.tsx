@@ -11,7 +11,7 @@ import ScreenWrapper from "@/components/ScreenWrapper";
 import { useDispatch } from "react-redux";
 import { useRouter } from "expo-router";
 import { signOutService } from "@/services/authServices/SignOutService";
-import { signOutFailure, signOutSuccess } from "@/store/slices/auhtSlice";
+import { signOutFailure, signOutSuccess } from "@/store/slices/authSlice";
 import CustomButton from "@/components/ui/CustomButton";
 import { Typography } from "@/types/Typography";
 import CustomModal from "@/components/ui/CustomModal";
