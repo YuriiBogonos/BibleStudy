@@ -14,24 +14,26 @@ interface HistoryListProps<T extends BaseHistoryItem> {
   items: T[];
   isLoading?: boolean;
   error?: string | null;
+  historyType: HistoryTypeEnum;
 }
 
 const HistoryList = <T extends BaseHistoryItem>({
   items,
   isLoading = false,
+  historyType,
 }: HistoryListProps<T>) => {
-  const isSession = (item: BaseHistoryItem): item is Session =>
-    "questions" in item;
+  // const isSession = (item: BaseHistoryItem): item is Session =>
+  //   "questions" in item;
 
-  const determineHistoryType = (): HistoryTypeEnum => {
-    if (items.length === 0) {
-      return HistoryType.QUESTION;
-    }
-    return isSession(items[0]) ? HistoryType.SESSION : HistoryType.QUESTION;
-  };
+  // const determineHistoryType = (): HistoryTypeEnum => {
+  //   if (items.length === 0) {
+  //     return HistoryType.QUESTION;
+  //   }
+  //   return isSession(items[0]) ? HistoryType.SESSION : HistoryType.QUESTION;
+  // };
 
-  const historyType = determineHistoryType();
-  console.log("historyType ===>", historyType);
+  // const historyType = determineHistoryType();
+  // console.log("historyType ===>", historyType);
 
   return (
     <View style={styles.container}>
@@ -42,6 +44,7 @@ const HistoryList = <T extends BaseHistoryItem>({
             : "Question History"
         }
         historyType={historyType}
+        loading={isLoading}
       />
       {isLoading ? (
         <View style={styles.loadingContainer}>

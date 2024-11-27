@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
-import { Alert } from "react-native";
+import { useState, useEffect, useCallback } from "react";
+import { ActivityIndicator, Alert } from "react-native";
 import { View, Text, StyleSheet } from "react-native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "expo-router";
 
 import { Typography } from "@/types/Typography";
@@ -9,39 +9,41 @@ import ScreenWrapper from "@/components/ScreenWrapper";
 import VerseOfWeek from "@/components/ui/VerseOfWeek";
 import CustomButton from "@/components/ui/CustomButton";
 import HistoryList from "@/components/ui/HistoryList/HistoryList";
-import { Session } from "@/components/ui/HistoryList/types";
+import { HistoryType, Session } from "@/components/ui/HistoryList/types";
 
 import { useGetUserSessions } from "@/services/SessionHistoryService";
 import { getUsernameFromEmail } from "@/services/formatMailName";
 
 import PlusIconButton from "@/assets/images/PlusIconButton";
 import { RootState } from "@/store/store";
+import { IConvertedSessions, setSessions } from "@/store/slices/historySlice";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function MainScreen() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const getUserSessions = useGetUserSessions();
 
   const user = useSelector((state: RootState) => state.auth.user);
-
-  const [sessions, setSessions] = useState<Session[]>([]);
+  const sessions = useSelector((state: RootState) => state.history.sessions);
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const loadSessions = async () => {
-      if (!user?.uid) {
-        setIsLoading(false);
-        return;
-      }
+  const loadSessions = useCallback(async () => {
+    if (!user?.uid) {
+      setIsLoading(false);
+      return;
+    }
 
-      try {
-        setIsLoading(true);
-        setError(null);
+    try {
+      setIsLoading(true);
+      setError(null);
 
-        const firestoreSessions = await getUserSessions(user.uid);
+      const firestoreSessions = await getUserSessions(user.uid);
 
-        const convertedSessions = firestoreSessions.map((firestoreSession) => ({
+      const convertedSessions: IConvertedSessions[] = firestoreSessions.map(
+        (firestoreSession) => ({
           id: firestoreSession.id,
           title: firestoreSession.sessionName,
           verses: firestoreSession.questions.reduce(
@@ -53,23 +55,24 @@ export default function MainScreen() {
           status: firestoreSession.complexity,
           date: new Date(firestoreSession.createdAt).toLocaleDateString(),
           questions: firestoreSession.questions.length,
-        }));
+        })
+      );
 
-        setSessions(convertedSessions);
-      } catch (error) {
-        console.error("Error loading sessions:", error);
-        setError("Failed to load sessions. Please try again later.");
-        Alert.alert(
-          "Error",
-          "Failed to load sessions. Please try again later."
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      dispatch(setSessions(convertedSessions));
+    } catch (error) {
+      console.error("Error loading sessions:", error);
+      setError("Failed to load sessions. Please try again later.");
+      Alert.alert("Error", "Failed to load sessions. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user?.uid, dispatch, getUserSessions]);
 
-    loadSessions();
-  }, [user?.uid, getUserSessions]);
+  useFocusEffect(
+    useCallback(() => {
+      loadSessions();
+    }, [loadSessions])
+  );
 
   const handleNewSession = () => {
     if (!user?.uid) {
@@ -98,7 +101,12 @@ export default function MainScreen() {
           text="Start new session"
         />
         <View style={styles.sessionHistory}>
-          <HistoryList items={sessions} isLoading={isLoading} error={error} />
+          <HistoryList
+            items={sessions?.length ? sessions : []}
+            isLoading={isLoading}
+            error={error}
+            historyType={HistoryType.SESSION}
+          />
         </View>
       </View>
     </ScreenWrapper>

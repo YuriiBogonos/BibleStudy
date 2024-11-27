@@ -8,14 +8,25 @@ import {
   HistoryTypeEnum,
 } from "@/components/ui/HistoryList/types";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
 
 interface HistoryHeaderProps {
   title: string;
   historyType: HistoryTypeEnum;
+  loading: boolean;
 }
 
-const HistoryHeader: FC<HistoryHeaderProps> = ({ title, historyType }) => {
+const HistoryHeader: FC<HistoryHeaderProps> = ({
+  title,
+  historyType,
+  loading,
+}) => {
   const router = useRouter();
+
+  const { sessions, questions } = useSelector(
+    (state: RootState) => state.history
+  );
 
   const routesMap: Record<HistoryTypeEnum, Href<string>> = {
     [HistoryType.SESSION]: "/sessionFullHistory" as Href<string>,
@@ -33,19 +44,22 @@ const HistoryHeader: FC<HistoryHeaderProps> = ({ title, historyType }) => {
     <View style={styles.header}>
       <Text style={Typography.h3}>{title}</Text>
 
-      <TouchableOpacity onPress={handleNavigation}>
-        <View style={styles.viewFullHistoryContainer}>
-          <Text style={[Typography.smallMedium, styles.viewFullHistory]}>
-            View full history
-          </Text>
-          <AntDesign
-            name="right"
-            size={12}
-            color={Colors.DarkBlue}
-            style={styles.arrowIcon}
-          />
-        </View>
-      </TouchableOpacity>
+      {(historyType === HistoryType.SESSION && sessions?.length !== 0) ||
+      (historyType === HistoryType.QUESTION && questions?.length !== 0) ? (
+        <TouchableOpacity onPress={handleNavigation} disabled={loading}>
+          <View style={styles.viewFullHistoryContainer}>
+            <Text style={[Typography.smallMedium, styles.viewFullHistory]}>
+              View full history
+            </Text>
+            <AntDesign
+              name="right"
+              size={12}
+              color={Colors.DarkBlue}
+              style={styles.arrowIcon}
+            />
+          </View>
+        </TouchableOpacity>
+      ) : null}
     </View>
   );
 };

@@ -1,35 +1,7 @@
 import firestore from "@react-native-firebase/firestore";
 import { Question } from "@/api/openaiApi";
 import { useCallback } from "react";
-
-export interface GenerateSessionResponse {
-  id: string;
-  sessionName: string;
-  focusTopic: string;
-  preferredBible: string;
-  complexity: string;
-  questions: Question[];
-}
-
-export interface FirestoreSession {
-  id: string;
-  userId: string;
-  sessionName: string;
-  focusTopic: string;
-  preferredBible: string;
-  complexity: string;
-  questions: Question[];
-  createdAt: number;
-  updatedAt: number;
-}
-
-export interface CreateSessionDTO {
-  sessionName: string;
-  focusTopic: string;
-  preferredBible: string;
-  complexity: string;
-  questions: Question[];
-}
+import { CreateSessionDTO, FirestoreSession } from "@/types/SessionsTypes";
 
 const SESSIONS_COLLECTION = "sessions";
 

@@ -18,7 +18,7 @@ import { auth, firestore } from "@/config/config";
 import { formatFirebaseErrorMessage } from "@/services/formatFirebaseError";
 
 import { FirebaseError } from "@firebase/util";
-import { changeFullName } from "@/store/slices/auhtSlice";
+import { changeFullName } from "@/store/slices/authSlice";
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 import { sendVerificationEmail } from "@/services/authServices/SignUpService";
@@ -54,8 +54,6 @@ const AccountSettingsForm = () => {
       setChangeUserInfoSuccess("");
 
       const firebaseUser = auth().currentUser;
-
-      console.log("user ===>", user);
 
       if (user?.displayName === value.fullName && user?.email === value.email) {
         console.log("Change necessary value for make update");

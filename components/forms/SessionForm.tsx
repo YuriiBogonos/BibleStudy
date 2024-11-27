@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { View, Text, StyleSheet, ScrollView } from "react-native";
 import { Formik, FormikHelpers } from "formik";
 import { useNavigation } from "@react-navigation/native";
-import { StackNavigationProp } from "@react-navigation/stack";
 
 import CustomInput from "@/components/ui/CustomInput/CustomInput";
 import { InputType } from "@/components/ui/CustomInput/types";
@@ -18,34 +17,14 @@ import { TopicColor } from "@/types/TopicColor";
 
 import { GenerateSessionPayload, Question } from "@/api/openaiApi";
 import { useGenerateSessionMutation } from "@/api/baseQuery";
+import { useCreateSession } from "@/services/SessionHistoryService";
+import { auth } from "@/config/config";
+
 import {
   CreateSessionDTO,
-  useCreateSession,
-} from "@/services/SessionHistoryService";
-import { auth } from "@/config/config";
-import { RootStackParamList } from "@/app/(sessions)/_layout";
-
-interface FormValues {
-  sessionName: string;
-  numberOfQuestions: number;
-  verses: number;
-  focusTopic: string;
-  preferredBible: string;
-  complexity: string;
-}
-
-export interface INavigationData {
-  id: string;
-  focusTopic: string;
-  createdAt: number;
-  sessionName: string;
-  preferredBible: string;
-  complexity: string;
-  questions: Question[];
-  answers: string[];
-}
-
-type NavigationProp = StackNavigationProp<RootStackParamList, "(sessions)">;
+  ISessionsFormValues,
+  NavigationProp,
+} from "@/types/SessionsTypes";
 
 const initialFocusTopics = [
   "Empathy",
@@ -81,7 +60,7 @@ const SessionForm: React.FC = () => {
     useState<string[]>(initialFocusTopics);
   const [openAiError, setOpenAiError] = useState<string>("");
 
-  const initialValues: FormValues = {
+  const initialValues: ISessionsFormValues = {
     sessionName: "",
     numberOfQuestions: 1,
     verses: 1,
@@ -102,8 +81,8 @@ const SessionForm: React.FC = () => {
   };
 
   const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting, resetForm }: FormikHelpers<FormValues>
+    values: ISessionsFormValues,
+    { setSubmitting, resetForm }: FormikHelpers<ISessionsFormValues>
   ) => {
     try {
       setOpenAiError("");

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -6,47 +6,56 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
-import { Colors } from "@/types/Colors";
+import { Formik, FormikHelpers } from "formik";
+import { useNavigation } from "expo-router";
+
 import CustomInput from "../../components/ui/CustomInput/CustomInput";
 import CustomSelect from "../../components/ui/CustomSelect";
 import { InputType } from "@/components/ui/CustomInput/types";
 import ScreenWrapper from "../../components/ScreenWrapper";
-import { Typography } from "@/types/Typography";
-import { questionHistory } from "@/mock/mockQuestionsHistory";
-import { Formik, FormikHelpers } from "formik";
-import { QuestionsGenerationSchema } from "@/validation/QuestionsGenerationSchema";
 import Counter from "@/components/ui/Counter";
 import HistoryList from "@/components/ui/HistoryList/HistoryList";
+
+import { Typography } from "@/types/Typography";
+import { Colors } from "@/types/Colors";
+// import { questionHistory } from "@/mock/mockQuestionsHistory";
+import { QuestionsGenerationSchema } from "@/validation/QuestionsGenerationSchema";
 import { useGenerateResponseMutation } from "@/api/baseQuery";
-import { useNavigation, useRouter } from "expo-router";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../(sessions)/_layout";
 
-interface FormValues {
-  question: string;
-  verses: number;
-  preferredBible: string;
-  complexity: string;
-}
-
-export interface IQuestionNavigationData {
-  verses: string;
-  question: string;
-  preferredBible: string;
-  complexity: string;
-}
-
-type NavigationProp = StackNavigationProp<RootStackParamList, "(sessions)">;
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { NavigationProp } from "@/types/SessionsTypes";
+import {
+  IQuestionNavigationData,
+  IQuestionsData,
+  IQuestionsFormValues,
+  IVerses,
+} from "@/types/QuestionsTypes";
+import {
+  createQuestion,
+  getQuestionsHistory,
+} from "@/services/questionsHistoryService";
+import { setQuestions } from "@/store/slices/historySlice";
+import { HistoryType } from "@/components/ui/HistoryList/types";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Questions() {
+  const dispatch = useDispatch();
   const navigation = useNavigation<NavigationProp>();
-
   const [generateResponse] = useGenerateResponseMutation();
+
+  const user = useSelector((state: RootState) => state.auth.user);
+  const questions = useSelector((state: RootState) => state.history.questions);
 
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const initialValues: FormValues = {
+  const [loadingQuestions, setLoadingQuestions] = useState<boolean>(false);
+  const [questionsError, setQuestionsError] = useState<string>("");
+
+  // const [questionsList, setQuestionsList] = useState<any>([]);
+
+  const initialValues: IQuestionsFormValues = {
     question: "",
     verses: 1,
     preferredBible: "",
@@ -54,8 +63,8 @@ export default function Questions() {
   };
 
   const handleSubmit = async (
-    values: FormValues,
-    { resetForm }: FormikHelpers<FormValues>
+    values: IQuestionsFormValues,
+    { resetForm }: FormikHelpers<IQuestionsFormValues>
   ) => {
     try {
       setError(null);
@@ -93,6 +102,18 @@ export default function Questions() {
           complexity: values.complexity,
         };
 
+        const questionsDataFirebase: IQuestionsData = {
+          verses: verses as IVerses[],
+          question: values.question,
+          preferredBible: values.preferredBible,
+          complexity: values.complexity,
+        };
+
+        await createQuestion(
+          user?.uid,
+          questionsDataFirebase as IQuestionsData
+        );
+
         navigation.navigate("(sessions)", {
           screen: "questionResult",
           params: { questionsData },
@@ -103,15 +124,54 @@ export default function Questions() {
         console.log("data is not a data", error);
         throw new Error("Unexpected API response structure");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error generating response:", error);
       setIsLoading(false);
 
       setError(
-        "An error occurred while generating the response. Please try again."
+        error.message ||
+          "An error occurred while generating the response. Please try again."
       );
     }
   };
+
+  const loadQuestions = useCallback(async () => {
+    console.log("Loading questions...");
+    setLoadingQuestions(true);
+    setQuestionsError("");
+
+    if (!user?.uid) {
+      setLoadingQuestions(false);
+      return;
+    }
+
+    try {
+      const firestoreSession = await getQuestionsHistory(user.uid);
+
+      const convertedQuestions = firestoreSession.map((question) => ({
+        id: question.id,
+        title: question.question,
+        version: question.preferredBible,
+        verses: question.verses.length,
+        date: new Date(question.createdAt).toLocaleDateString(),
+        status: question.complexity,
+      }));
+
+      dispatch(setQuestions(convertedQuestions));
+    } catch (error) {
+      console.error("Error in getQuestionsHistory:", error);
+      setQuestionsError("Failed to load questions. Please try again later.");
+    } finally {
+      setLoadingQuestions(false);
+    }
+  }, [user?.uid, getQuestionsHistory, dispatch]);
+
+  useFocusEffect(
+    useCallback(() => {
+      loadQuestions();
+    }, [loadQuestions])
+  );
+
   return (
     <ScreenWrapper>
       <Formik
@@ -205,14 +265,18 @@ export default function Questions() {
               </Text>
               {isLoading && (
                 <View style={styles.loader}>
-                  <ActivityIndicator color={"black"} />
+                  <ActivityIndicator color={"white"} />
                 </View>
               )}
             </TouchableOpacity>
             {error && <Text style={styles.errorText}>{error}</Text>}
 
             <View style={styles.historyContainer}>
-              <HistoryList items={questionHistory} />
+              <HistoryList
+                items={questions?.length ? questions : []}
+                isLoading={loadingQuestions}
+                historyType={HistoryType.QUESTION}
+              />
             </View>
           </View>
         )}
