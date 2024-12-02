@@ -30,6 +30,7 @@ import { getUserInfoByUid } from "@/services/getUserInfoByUid";
 import { RootStackParamList } from "@/types/SessionsTypes";
 import CrossAnimation from "./loadingScreen";
 import HistoryLayout from "./(history)/_layout";
+import CrossLoadingIcon from "./loadingScreen";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,7 +49,9 @@ export default function RootLayout() {
   const [loaded, error] = useFonts({});
 
   const [endAnimation, setEndAnimation] = useState<boolean>(true);
-  const [isAnimationComplete, setIsAnimationComplete] = useState(false);
+  const [isAnimationComplete, setIsAnimationComplete] = useState(true);
+
+  const [isAppLoaded, setIsAppLoaded] = useState(false);
 
   useEffect(() => {
     if (error) throw error;
@@ -57,37 +60,25 @@ export default function RootLayout() {
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
+
+      setTimeout(() => {
+        setIsAppLoaded(true); // Mark app as loaded
+      }, 2000);
     }
   }, [loaded]);
 
-  if (!loaded || endAnimation) {
-    return (
-      <CrossAnimation
-        setEndAnimation={setEndAnimation}
-        setIsAnimationComplete={setIsAnimationComplete}
-        isAnimationComplete={isAnimationComplete}
-      />
-    );
+  if (!loaded || !isAppLoaded) {
+    return <CrossLoadingIcon isAppLoaded={isAppLoaded} />;
   }
 
   return (
     <Provider store={store}>
-      <RootLayoutNav
-        setEndAnimation={setEndAnimation}
-        setIsAnimationComplete={setIsAnimationComplete}
-        isAnimationComplete={isAnimationComplete}
-        endAnimation={endAnimation}
-      />
+      <RootLayoutNav isAppLoaded={isAppLoaded} />
     </Provider>
   );
 }
 
-const RootLayoutNav = ({
-  setEndAnimation,
-  isAnimationComplete,
-  setIsAnimationComplete,
-  endAnimation,
-}: any) => {
+const RootLayoutNav = ({ isAppLoaded }: { isAppLoaded: boolean }) => {
   const colorScheme = useColorScheme();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
@@ -118,12 +109,13 @@ const RootLayoutNav = ({
     return subscriber;
   }, [dispatch]);
 
-  if (appLoading || endAnimation) {
+  if (appLoading) {
     return (
-      <CrossAnimation
-        setEndAnimation={setEndAnimation}
-        setIsAnimationComplete={setIsAnimationComplete}
-        isAnimationComplete={isAnimationComplete}
+      <CrossLoadingIcon
+        // setEndAnimation={setEndAnimation}
+        // setIsAnimationComplete={setIsAnimationComplete}
+        // isAnimationComplete={isAnimationComplete}
+        isAppLoaded={isAppLoaded}
       />
     );
   }
