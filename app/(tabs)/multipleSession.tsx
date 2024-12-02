@@ -7,7 +7,7 @@ export default function MultipleSession() {
   return (
     <View style={styles.content}>
       <View style={styles.container}>
-        <CustomHeader screenTitle="New session" path="home" />
+        <CustomHeader screenTitle="New session" />
         <SessionForm />
       </View>
     </View>

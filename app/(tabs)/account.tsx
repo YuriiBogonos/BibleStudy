@@ -63,7 +63,7 @@ export default function Account() {
           icon={<AccountSettingsIcon />}
           text="Account Settings"
           onPress={() =>
-            navigation.navigate("(tabs)", {
+            navigation.navigate("(history)", {
               screen: "accountSettings",
             })
           }
