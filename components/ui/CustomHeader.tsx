@@ -1,6 +1,6 @@
 import React from "react";
 import { Header } from "@rneui/themed";
-import { StyleSheet } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import { Colors } from "@/types/Colors";
@@ -17,34 +17,37 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ screenTitle, path }) => {
   // const router = useRouter();
 
   return (
-    <Header
-      leftComponent={
+    <SafeAreaView style={styles.containerStyle}>
+      <View style={styles.iconBlock}>
         <AntDesign
           name="left"
           size={20}
           color={Colors.DarkBlue}
           onPress={navigation.goBack}
         />
-      }
-      centerComponent={{
-        text: screenTitle,
-        style: Typography.h2,
-      }}
-      containerStyle={styles.containerStyle}
-      backgroundColor={Colors.White}
-    />
+      </View>
+      <View style={styles.titleBlock}>
+        <Text style={styles.titleText}>{screenTitle}</Text>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   containerStyle: {
-    borderBottomWidth: 0,
+    flexDirection: "row",
+    marginBottom: 20,
   },
-  centerTextStyle: {
-    color: Colors.White,
+  titleBlock: {
+    width: "95%",
   },
-  iconStyle: {
-    color: Colors.Black,
+  titleText: {
+    textAlign: "center",
+    fontSize: 24,
+  },
+  iconBlock: {
+    width: "5%",
+    marginTop: 6,
   },
 });
 

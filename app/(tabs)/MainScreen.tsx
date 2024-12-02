@@ -1,32 +1,24 @@
-import { useState, useEffect, useCallback } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  Button,
-  TouchableOpacity,
-} from "react-native";
-import { View, Text, StyleSheet } from "react-native";
+import { useState, useCallback } from "react";
+import { Alert } from "react-native";
+import { View, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { useRouter } from "expo-router";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
 import { Typography } from "@/types/Typography";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import VerseOfWeek from "@/components/ui/VerseOfWeek";
 import CustomButton from "@/components/ui/CustomButton";
 import HistoryList from "@/components/ui/HistoryList/HistoryList";
-import { HistoryType, Session } from "@/components/ui/HistoryList/types";
-
+import { HistoryType } from "@/components/ui/HistoryList/types";
 import { useGetUserSessions } from "@/services/SessionHistoryService";
 import { getUsernameFromEmail } from "@/services/formatMailName";
-
 import PlusIconButton from "@/assets/images/PlusIconButton";
 import { RootState } from "@/store/store";
 import { IConvertedSessions, setSessions } from "@/store/slices/historySlice";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { styles } from "./home";
 import { HistoryNavigationProp } from "@/types/SessionsTypes";
 
 export default function MainScreen() {
-  const router = useRouter();
   const dispatch = useDispatch();
   const getUserSessions = useGetUserSessions();
 
@@ -118,20 +110,9 @@ export default function MainScreen() {
             error={error}
             historyType={HistoryType.SESSION}
             shouldDisabledItem={isLoading}
-            // returnToFullSessionHistory={false}
           />
         </View>
       </View>
     </ScreenWrapper>
   );
 }
-
-export const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    paddingHorizontal: 20,
-  },
-  sessionHistory: {
-    paddingVertical: 24,
-  },
-});

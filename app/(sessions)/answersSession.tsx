@@ -223,6 +223,87 @@ export default function AnswersSession() {
   );
 }
 
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.White,
+  },
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+  },
+  infoContainer: {
+    flexDirection: "row",
+    alignItems: "flex-end",
+    gap: 5,
+    marginBottom: 30,
+  },
+  topicBlock: {
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 50,
+    flex: 1,
+  },
+  detail: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginBottom: 8,
+  },
+  itemContainer: {
+    borderWidth: 1,
+    borderColor: Colors.LightBlue,
+    backgroundColor: Colors.LightBlue,
+    flexDirection: "column",
+    alignItems: "flex-start",
+    padding: 16,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  questionQueue: {
+    color: Colors.DarkBlue,
+    marginBottom: 8,
+  },
+  questionText: {
+    fontWeight: "700",
+  },
+  answerText: {
+    color: Colors.Black,
+  },
+  versesNumberContainer: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    marginTop: 5,
+  },
+  versesNumber: {
+    color: Colors.DarkBlue,
+  },
+  verseBlock: {
+    borderWidth: 1,
+    borderColor: Colors.DarkBlue,
+    backgroundColor: Colors.LightBlue,
+    padding: 12,
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  verseItem: {
+    color: Colors.DarkGray,
+  },
+  verseHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  scrollViewContent: {
+    paddingBottom: 20,
+  },
+  tagSelector: {
+    width: "100%",
+  },
+});
+
 // export default function AnswersSession() {
 //   const navigation = useNavigation<NavigationProp>();
 
@@ -394,85 +475,3 @@ export default function AnswersSession() {
 //     </SafeAreaView>
 //   );
 // }
-
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: Colors.White,
-  },
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingBottom: 10,
-  },
-  infoContainer: {
-    flexDirection: "row",
-    alignItems: "flex-end",
-    gap: 5,
-    marginBottom: 30,
-    marginTop: 20,
-  },
-  topicBlock: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 50,
-    flex: 1,
-  },
-  detail: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-    marginBottom: 8,
-  },
-  itemContainer: {
-    borderWidth: 1,
-    borderColor: Colors.LightBlue,
-    backgroundColor: Colors.LightBlue,
-    flexDirection: "column",
-    alignItems: "flex-start",
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  questionQueue: {
-    color: Colors.DarkBlue,
-    marginBottom: 8,
-  },
-  questionText: {
-    fontWeight: "700",
-  },
-  answerText: {
-    color: Colors.Black,
-  },
-  versesNumberContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    marginTop: 5,
-  },
-  versesNumber: {
-    color: Colors.DarkBlue,
-  },
-  verseBlock: {
-    borderWidth: 1,
-    borderColor: Colors.DarkBlue,
-    backgroundColor: Colors.LightBlue,
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  verseItem: {
-    color: Colors.DarkGray,
-  },
-  verseHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  scrollViewContent: {
-    paddingBottom: 20,
-  },
-  tagSelector: {
-    width: "100%",
-  },
-});

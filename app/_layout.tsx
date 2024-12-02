@@ -29,10 +29,7 @@ import { WEB_CLIENT_ID } from "@/constants/keys";
 import { getUserInfoByUid } from "@/services/getUserInfoByUid";
 import { RootStackParamList } from "@/types/SessionsTypes";
 import CrossAnimation from "./loadingScreen";
-
-// export const unstable_settings = {
-//   initialRouteName: "home",
-// };
+import HistoryLayout from "./(history)/_layout";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -146,6 +143,13 @@ const RootLayoutNav = ({
             <Stack.Screen
               name="(sessions)"
               component={SessionsLayout}
+              options={{
+                header: () => null,
+              }}
+            />
+            <Stack.Screen
+              name="(history)"
+              component={HistoryLayout}
               options={{
                 header: () => null,
               }}

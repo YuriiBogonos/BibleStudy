@@ -62,6 +62,11 @@ export type TabsNavigationProp = StackNavigationProp<
   "(tabs)"
 >;
 
+export type HistoryNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "(history)"
+>;
+
 export type RootStackParamList = {
   "(tabs)": {
     screen: keyof TabsStackParamList;
@@ -72,6 +77,10 @@ export type RootStackParamList = {
     params?: SessionsStackParamList[keyof SessionsStackParamList];
   };
   "(auth)": undefined;
+  "(history)": {
+    screen: keyof HistoryStackParamList;
+    params?: HistoryStackParamList[keyof HistoryStackParamList];
+  };
 };
 
 export type SessionsStackParamList = {
@@ -86,8 +95,12 @@ export type SessionsStackParamList = {
 };
 
 export type TabsStackParamList = {
-  accountSettings: undefined;
   account: undefined;
+};
+
+export type HistoryStackParamList = {
   sessionFullHistory: undefined;
   questionFullHistory: undefined;
+  accountSettings: undefined;
+  multipleSession: undefined;
 };
