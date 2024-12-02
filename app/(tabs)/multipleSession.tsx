@@ -5,17 +5,23 @@ import SessionForm from "@/components/forms/SessionForm";
 
 export default function MultipleSession() {
   return (
-    <ScreenWrapper>
+    <View style={styles.content}>
       <View style={styles.container}>
-        <CustomHeader screenTitle="New session" />
+        <CustomHeader screenTitle="New session" path="home" />
         <SessionForm />
       </View>
-    </ScreenWrapper>
+    </View>
   );
 }
 const styles = StyleSheet.create({
+  content: {
+    backgroundColor: "white",
+    flex: 1,
+    height: "auto",
+  },
   container: {
     width: "100%",
+    height: "100%",
     paddingHorizontal: 20,
   },
 });

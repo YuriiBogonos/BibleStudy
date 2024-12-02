@@ -216,24 +216,85 @@ const generateAnswer = async (
   const content = response.choices?.[0]?.message?.content;
 
   if (content) {
-    const jsonMatch = content.match(/({.*})/s);
+    const jsonMatch = content.match(/({.*})/s); // Match JSON-like structure
 
     if (jsonMatch && jsonMatch[1]) {
       try {
         const jsonResponse = JSON.parse(jsonMatch[1]);
-        return jsonResponse;
+
+        // Check if "verses" exists and is a non-empty array
+        if (
+          jsonResponse.verses &&
+          Array.isArray(jsonResponse.verses) &&
+          jsonResponse.verses.length > 0
+        ) {
+          return jsonResponse; // Valid response
+        } else {
+          throw new Error("Response JSON is missing valid 'verses' data");
+        }
       } catch (error) {
         console.error("Error parsing answer JSON:", error);
         throw new Error("Failed to parse JSON response for answer");
       }
     } else {
       console.error("error in generateAnswer. No valid JSON found in response");
-      throw new Error("No valid JSON found in response");
+      throw new Error("Failed to generate answer");
     }
   }
 
+  console.log("Failed to generate answer");
+
   throw new Error("Failed to generate answer");
 };
+
+// const generateAnswer = async (
+//   question: string,
+//   verses: number,
+//   preferredBible: string,
+//   complexity: string,
+//   messages: Message[],
+//   model: string
+// ): Promise<AnswerResponse> => {
+//   const response = await createChatCompletion({
+//     model,
+//     messages: [
+//       ...messages,
+//       {
+//         role: "user",
+//         content: answerPrompt(question, verses, preferredBible, complexity),
+//       },
+//     ],
+//     max_tokens: 1000,
+//   });
+
+//   console.log("response in createChatCompletion QQQQ ===>", response);
+
+//   const content = response.choices?.[0]?.message?.content;
+
+//   console.log("content ====>", content);
+//   console.log("content typeof ====>", typeof content);
+
+//   if (content) {
+//     const jsonMatch = content.match(/({.*})/s);
+
+//     console.log("jsonMatch ===>", jsonMatch);
+
+//     if (jsonMatch && jsonMatch[1]) {
+//       try {
+//         const jsonResponse = JSON.parse(jsonMatch[1]);
+//         return jsonResponse;
+//       } catch (error) {
+//         console.error("Error parsing answer JSON:", error);
+//         throw new Error("Failed to parse JSON response for answer");
+//       }
+//     } else {
+//       console.error("error in generateAnswer. No valid JSON found in response");
+//       throw new Error("No valid data found in response");
+//     }
+//   }
+
+//   throw new Error("Failed to generate answer");
+// };
 
 // Основна функція запиту OpenAI
 const openAiBaseQuery: BaseQueryFn<
@@ -246,6 +307,7 @@ const openAiBaseQuery: BaseQueryFn<
 
     if ("sessionInfo" in payload) {
       console.log("Generating session...");
+
       const sessionPayload = payload as GenerateSessionPayload;
       const questions = await generateQuestions(
         sessionPayload.sessionInfo,
@@ -266,6 +328,7 @@ const openAiBaseQuery: BaseQueryFn<
       } as { data: SessionCompletion };
     }
 
+    console.log("Generate question ....");
     const { question, verses, preferredBible, complexity, messages, model } =
       payload as GenerateResponsePayload & {
         question: string;
@@ -282,6 +345,8 @@ const openAiBaseQuery: BaseQueryFn<
       messages,
       model
     );
+
+    console.log("answerResponse ====>", answerResponse);
 
     return { data: answerResponse };
   } catch (error) {

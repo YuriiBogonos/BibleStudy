@@ -5,45 +5,49 @@ import HistoryItem from "@/components/ui/HistoryList/HistoryItem";
 import CustomHeader from "@/components/ui/CustomHeader";
 
 interface CustomHistoryScreenProps<T extends BaseHistoryItem> {
-	data: T[];
-	screenTitle: string;
+  data: T[];
+  screenTitle: string;
 }
 
 const CustomHistoryScreen: FC<
-	CustomHistoryScreenProps<BaseHistoryItem | Session>
+  CustomHistoryScreenProps<BaseHistoryItem | Session>
 > = ({ data, screenTitle }) => {
-	return (
-		<View style={styles.container}>
-			<CustomHeader screenTitle={screenTitle} />
-			<FlatList
-				data={data}
-				keyExtractor={(item) => item.title}
-				renderItem={({ item }) => (
-					<View style={styles.itemWrapper}>
-						<HistoryItem item={item} />
-					</View>
-				)}
-				contentContainerStyle={styles.listContainer}
-			/>
-		</View>
-	);
+  return (
+    <View style={styles.container}>
+      <CustomHeader
+        screenTitle={screenTitle}
+        // path={screenTitle === "Question history" ? "questions" : "home"}ц
+      />
+      <FlatList
+        data={data}
+        keyExtractor={(item) => item.id || Math.random().toString()}
+        renderItem={({ item }) => (
+          <View style={styles.itemWrapper}>
+            <HistoryItem item={item} />
+          </View>
+        )}
+        contentContainerStyle={styles.listContainer}
+      />
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-	container: {
-		paddingHorizontal: 20,
-		width: "100%",
-	},
-	header: {
-		marginBottom: 20,
-	},
-	listContainer: {
-		paddingHorizontal: 5,
-		paddingVertical: 5,
-	},
-	itemWrapper: {
-		marginBottom: 10,
-	},
+  container: {
+    paddingHorizontal: 20,
+    width: "100%",
+  },
+  header: {
+    marginBottom: 20,
+  },
+  listContainer: {
+    paddingHorizontal: 5,
+    paddingVertical: 5,
+    paddingBottom: 120,
+  },
+  itemWrapper: {
+    marginBottom: 10,
+  },
 });
 
 export default CustomHistoryScreen;

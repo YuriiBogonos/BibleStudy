@@ -17,10 +17,14 @@ import { Typography } from "@/types/Typography";
 import CustomModal from "@/components/ui/CustomModal";
 import { useState } from "react";
 import SignOutIcon from "@/assets/images/SignOutIcon";
+import { useNavigation } from "@react-navigation/native";
+import { TabsNavigationProp } from "@/types/SessionsTypes";
 
 export default function Account() {
   const dispatch = useDispatch();
   const router = useRouter();
+
+  const navigation = useNavigation<TabsNavigationProp>();
 
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -58,7 +62,11 @@ export default function Account() {
         <SettingsItem
           icon={<AccountSettingsIcon />}
           text="Account Settings"
-          onPress={() => router.replace("/accountSettings")}
+          onPress={() =>
+            navigation.navigate("(tabs)", {
+              screen: "accountSettings",
+            })
+          }
         />
         <SettingsItem
           icon={<AccountSettingsAboutIcon />}
@@ -82,7 +90,7 @@ export default function Account() {
           <AccountSettingsSignOutIcon />
           <Text style={styles.signOutText}>Sign out</Text>
         </TouchableOpacity>
-        <CustomButton text={"Donate"} onPress={() => console.log("Donate")} />
+        {/* <CustomButton text={"Donate"} onPress={() => console.log("Donate")} /> */}
       </View>
       <CustomModal
         visible={modalVisible}

@@ -14,14 +14,17 @@ interface HistoryListProps<T extends BaseHistoryItem> {
   items: T[];
   isLoading?: boolean;
   error?: string | null;
-  historyType: HistoryTypeEnum;
+  historyType: HistoryTypeEnum | string;
+  shouldDisabledItem: boolean;
 }
 
 const HistoryList = <T extends BaseHistoryItem>({
   items,
   isLoading = false,
   historyType,
-}: HistoryListProps<T>) => {
+  shouldDisabledItem,
+}: // returnToFullSessionHistory,
+HistoryListProps<T>) => {
   // const isSession = (item: BaseHistoryItem): item is Session =>
   //   "questions" in item;
 
@@ -58,7 +61,11 @@ const HistoryList = <T extends BaseHistoryItem>({
         <View style={styles.itemList}>
           {items.map((item) => (
             <View key={item.id} style={styles.itemWrapper}>
-              <HistoryItem item={item} />
+              <HistoryItem
+                item={item}
+                shouldDisabledItems={shouldDisabledItem}
+                // returnToFullSessionHistory={returnToFullSessionHistory}
+              />
             </View>
           ))}
         </View>

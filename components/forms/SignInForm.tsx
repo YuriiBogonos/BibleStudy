@@ -224,14 +224,16 @@ const SignInForm: FC = () => {
             </TouchableOpacity>
           )}
 
-          <TouchableOpacity onPress={() => router.replace("/signUp")}>
-            <Text style={[Typography.smallRegular, styles.loginText]}>
-              Don't have an account yet?
-            </Text>
-            <Text style={[Typography.smallRegular, styles.loginLink]}>
-              Sign up
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity onPress={() => router.replace("/signUp")}>
+              <Text style={[Typography.smallRegular, styles.loginText]}>
+                Don't have an account yet?
+              </Text>
+              <Text style={[Typography.smallRegular, styles.loginLink]}>
+                Sign up
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     </Formik>
@@ -264,14 +266,14 @@ const styles = StyleSheet.create({
   },
   loginText: {
     textAlign: "center",
-    marginTop: 20,
+    marginTop: 10,
     color: Colors.Black,
   },
   loginLink: {
     textAlign: "center",
     color: Colors.Black,
     textDecorationLine: "underline",
-    marginTop: 20,
+    marginTop: 10,
   },
   errorText: {
     textAlign: "center",
@@ -287,6 +289,11 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 14,
     right: 20,
+  },
+  buttonWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
   },
 });
 

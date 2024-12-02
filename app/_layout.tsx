@@ -21,16 +21,18 @@ import LoadingScreen from "./loadingScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import AuthLayout from "./(auth)/_layout";
 import TabLayout from "./(tabs)/_layout";
-import SessionsLayout, { RootStackParamList } from "./(sessions)/_layout";
+import SessionsLayout from "./(sessions)/_layout";
 
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { WEB_CLIENT_ID } from "@/constants/keys";
 
 import { getUserInfoByUid } from "@/services/getUserInfoByUid";
+import { RootStackParamList } from "@/types/SessionsTypes";
+import CrossAnimation from "./loadingScreen";
 
-export const unstable_settings = {
-  initialRouteName: "home",
-};
+// export const unstable_settings = {
+//   initialRouteName: "home",
+// };
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,6 +50,9 @@ GoogleSignin.configure({
 export default function RootLayout() {
   const [loaded, error] = useFonts({});
 
+  const [endAnimation, setEndAnimation] = useState<boolean>(true);
+  const [isAnimationComplete, setIsAnimationComplete] = useState(false);
+
   useEffect(() => {
     if (error) throw error;
   }, [error]);
@@ -58,18 +63,34 @@ export default function RootLayout() {
     }
   }, [loaded]);
 
-  if (!loaded) {
-    return <LoadingScreen />;
+  if (!loaded || endAnimation) {
+    return (
+      <CrossAnimation
+        setEndAnimation={setEndAnimation}
+        setIsAnimationComplete={setIsAnimationComplete}
+        isAnimationComplete={isAnimationComplete}
+      />
+    );
   }
 
   return (
     <Provider store={store}>
-      <RootLayoutNav />
+      <RootLayoutNav
+        setEndAnimation={setEndAnimation}
+        setIsAnimationComplete={setIsAnimationComplete}
+        isAnimationComplete={isAnimationComplete}
+        endAnimation={endAnimation}
+      />
     </Provider>
   );
 }
 
-const RootLayoutNav = () => {
+const RootLayoutNav = ({
+  setEndAnimation,
+  isAnimationComplete,
+  setIsAnimationComplete,
+  endAnimation,
+}: any) => {
   const colorScheme = useColorScheme();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
@@ -100,8 +121,14 @@ const RootLayoutNav = () => {
     return subscriber;
   }, [dispatch]);
 
-  if (appLoading) {
-    return <LoadingScreen />;
+  if (appLoading || endAnimation) {
+    return (
+      <CrossAnimation
+        setEndAnimation={setEndAnimation}
+        setIsAnimationComplete={setIsAnimationComplete}
+        isAnimationComplete={isAnimationComplete}
+      />
+    );
   }
 
   return (

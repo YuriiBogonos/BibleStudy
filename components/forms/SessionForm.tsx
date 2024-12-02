@@ -324,16 +324,6 @@ const SessionForm: React.FC = () => {
                 </View>
               )}
             </View>
-            {/* <TouchableOpacity
-              onPress={() =>
-                navigation.navigate("(sessions)", {
-                  screen: "answersSession",
-                  params: { sessionData: "navigation data" },
-                })
-              }
-            >
-              <Text>AAAAA</Text>
-            </TouchableOpacity> */}
           </ScrollView>
         );
       }}

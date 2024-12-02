@@ -7,7 +7,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Formik, FormikHelpers } from "formik";
-import { useNavigation } from "expo-router";
 
 import CustomInput from "../../components/ui/CustomInput/CustomInput";
 import CustomSelect from "../../components/ui/CustomSelect";
@@ -38,6 +37,7 @@ import {
 import { setQuestions } from "@/store/slices/historySlice";
 import { HistoryType } from "@/components/ui/HistoryList/types";
 import { useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "expo-router";
 
 export default function Questions() {
   const dispatch = useDispatch();
@@ -93,8 +93,6 @@ export default function Questions() {
         const serializedVersesData = JSON.stringify(verses);
         console.log("Serialized verses data:", serializedVersesData);
 
-        setIsLoading(false);
-
         const questionsData: IQuestionNavigationData = {
           verses: serializedVersesData,
           question: values.question,
@@ -114,6 +112,8 @@ export default function Questions() {
           questionsDataFirebase as IQuestionsData
         );
 
+        setIsLoading(false);
+
         navigation.navigate("(sessions)", {
           screen: "questionResult",
           params: { questionsData },
@@ -122,7 +122,11 @@ export default function Questions() {
         resetForm();
       } else {
         console.log("data is not a data", error);
-        throw new Error("Unexpected API response structure");
+        throw new Error(
+          error
+            ? error
+            : "An error occurred while generating the response. Please try again."
+        );
       }
     } catch (error: any) {
       console.error("Error generating response:", error);
@@ -139,6 +143,7 @@ export default function Questions() {
     console.log("Loading questions...");
     setLoadingQuestions(true);
     setQuestionsError("");
+    setError("");
 
     if (!user?.uid) {
       setLoadingQuestions(false);
@@ -276,6 +281,8 @@ export default function Questions() {
                 items={questions?.length ? questions : []}
                 isLoading={loadingQuestions}
                 historyType={HistoryType.QUESTION}
+                shouldDisabledItem={isLoading}
+                // returnToFullHistory={true}
               />
             </View>
           </View>

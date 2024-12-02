@@ -20,13 +20,8 @@ export interface INavigationData {
   preferredBible: string;
   complexity: string;
   questions: Question[];
-  answers: string[];
+  // answers: string[];
 }
-
-export type NavigationProp = StackNavigationProp<
-  RootStackParamList,
-  "(sessions)"
->;
 
 export interface GenerateSessionResponse {
   id: string;
@@ -57,8 +52,21 @@ export interface CreateSessionDTO {
   questions: Question[];
 }
 
+export type NavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "(sessions)"
+>;
+
+export type TabsNavigationProp = StackNavigationProp<
+  RootStackParamList,
+  "(tabs)"
+>;
+
 export type RootStackParamList = {
-  "(tabs)": undefined;
+  "(tabs)": {
+    screen: keyof TabsStackParamList;
+    params?: TabsStackParamList[keyof TabsStackParamList];
+  };
   "(sessions)": {
     screen: keyof SessionsStackParamList;
     params?: SessionsStackParamList[keyof SessionsStackParamList];
@@ -67,8 +75,19 @@ export type RootStackParamList = {
 };
 
 export type SessionsStackParamList = {
-  answersSession: { sessionData: INavigationData };
+  answersSession: {
+    sessionData: INavigationData;
+    // returnToFullSessionHistory: boolean;
+  };
   questionResult: {
     questionsData: IQuestionNavigationData;
+    // returnToQuestionPage: boolean;
   };
+};
+
+export type TabsStackParamList = {
+  accountSettings: undefined;
+  account: undefined;
+  sessionFullHistory: undefined;
+  questionFullHistory: undefined;
 };

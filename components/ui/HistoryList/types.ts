@@ -1,5 +1,5 @@
 export interface BaseHistoryItem {
-  id:string;
+  id: string;
   title: string;
   verses: number;
   version: string;
@@ -17,8 +17,12 @@ export interface Question extends BaseHistoryItem {
   complexity: string;
 }
 export enum HistoryType {
-  SESSION = "session",
-  QUESTION = "question",
+  SESSION = "sessionFullHistory",
+  QUESTION = "questionFullHistory",
 }
+// export enum HistoryType {
+//   SESSION = "session",
+//   QUESTION = "question",
+// }
 
 export type HistoryTypeEnum = HistoryType.SESSION | HistoryType.QUESTION;

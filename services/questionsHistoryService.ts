@@ -1,5 +1,10 @@
 import firestore from "@react-native-firebase/firestore";
-import { IFirestoreQuestion, IQuestionsData } from "@/types/QuestionsTypes";
+import {
+  IFirestoreQuestion,
+  IQuestionNavigationData,
+  IQuestionsData,
+} from "@/types/QuestionsTypes";
+import { useCallback } from "react";
 
 const QUESTIONS_COLLECTION = "questions";
 
@@ -61,5 +66,28 @@ export const createQuestion = async (
   } catch (error) {
     console.error("Error adding question:", error);
     throw new Error("Failed to create a new question.");
+  }
+};
+
+export const getQuestionById = async (
+  questionId: string
+): Promise<IQuestionNavigationData | null> => {
+  try {
+    const doc = await firestore()
+      .collection(QUESTIONS_COLLECTION)
+      .doc(questionId)
+      .get();
+
+    if (!doc.exists) {
+      return null;
+    }
+
+    return {
+      ...(doc.data() as IQuestionNavigationData),
+      // id: doc.id,
+    };
+  } catch (error) {
+    console.error("Error getting session by ID:", error);
+    throw new Error("Failed to get session");
   }
 };

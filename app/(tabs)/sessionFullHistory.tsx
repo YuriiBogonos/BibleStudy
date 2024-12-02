@@ -1,19 +1,26 @@
 import React from "react";
-import CustomHistoryScreen from "@/templates/CustomHistoryScreen";
-import ScreenWrapper from "@/components/ScreenWrapper";
-import { sessionHistory } from "@/mock/mockSessionHistory";
 import { useSelector } from "react-redux";
+import { StyleSheet, Text, View } from "react-native";
+
 import { RootState } from "@/store/store";
-import { Text, View } from "react-native";
+import CustomHistoryScreen from "@/templates/CustomHistoryScreen";
 
 const SessionHistoryScreen = () => {
   const sessions = useSelector((state: RootState) => state.history.sessions);
 
   return (
-    <ScreenWrapper>
+    <View style={styles.container}>
       <CustomHistoryScreen data={sessions!} screenTitle="Session history" />
-    </ScreenWrapper>
+    </View>
   );
 };
 
 export default SessionHistoryScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "white",
+    flex: 1,
+    // height: "100%",
+  },
+});

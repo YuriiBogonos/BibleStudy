@@ -7,17 +7,20 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import { useNavigation } from "expo-router";
-import { Typography } from "@/types/Typography";
-import { Colors } from "@/types/Colors";
-import CustomHeader from "@/components/ui/CustomHeader";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+
 import { AntDesign } from "@expo/vector-icons";
+
 import SessionNavigation from "@/components/SessionsNavigation";
+import CustomHeader from "@/components/ui/CustomHeader";
+import CustomModal from "@/components/ui/CustomModal";
+
+import { Typography } from "@/types/Typography";
+import { SessionsStackParamList } from "@/types/SessionsTypes";
+import { Colors } from "@/types/Colors";
+
 import NivIcon from "@/assets/images/NivIcon";
 import ProcessIcon from "@/assets/images/ProcessIcon";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import { SessionsStackParamList } from "./_layout";
-import CustomModal from "@/components/ui/CustomModal";
 
 export type QuestionsRouteProp = RouteProp<
   SessionsStackParamList,
@@ -96,7 +99,7 @@ const VerseResults = () => {
               <Text style={[Typography.verseText, styles.verseText]}>
                 {expandedVerses[index]
                   ? verse.full_verse
-                  : `${verse.full_verse.slice(0, 150)}...`}
+                  : `${verse.full_verse.slice(0, 50)}...`}
               </Text>
               <View style={styles.versesNumberContainer}>
                 <Text style={styles.verseNumber}>Verses: {verse.verse}</Text>
@@ -120,7 +123,8 @@ const VerseResults = () => {
         onClose={() => setModalVisible(false)}
         onConfirm={() => {
           setModalVisible(false);
-          navigation.navigate("questions");
+          navigation.goBack();
+          // navigation.navigate("questions");
         }}
         message="Would you like to end the session?"
         confirmText="Yes, thanks"
