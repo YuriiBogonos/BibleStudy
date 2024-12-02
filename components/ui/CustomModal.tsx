@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     marginRight: 10,
+    justifyContent: "center",
   },
   deleteButton: {
     backgroundColor: Colors.Red,
@@ -108,6 +109,7 @@ const styles = StyleSheet.create({
   },
   confirmText: {
     color: Colors.White,
+    textAlign: "center",
   },
   cancelButton: {
     paddingVertical: 10,
@@ -117,6 +119,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: Colors.DarkBlue,
+    justifyContent: "center",
   },
   iconContainer: {
     marginBottom: 10,

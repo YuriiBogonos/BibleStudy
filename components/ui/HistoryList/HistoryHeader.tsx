@@ -10,10 +10,16 @@ import {
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/store";
+import { useNavigation } from "@react-navigation/native";
+import {
+  RootStackParamList,
+  TabsNavigationProp,
+  TabsStackParamList,
+} from "@/types/SessionsTypes";
 
 interface HistoryHeaderProps {
   title: string;
-  historyType: HistoryTypeEnum;
+  historyType: HistoryTypeEnum | string;
   loading: boolean;
 }
 
@@ -22,22 +28,44 @@ const HistoryHeader: FC<HistoryHeaderProps> = ({
   historyType,
   loading,
 }) => {
-  const router = useRouter();
+  // const router = useRouter();
+
+  // const { sessions, questions } = useSelector(
+  //   (state: RootState) => state.history
+  // );
+
+  // const routesMap: Record<HistoryTypeEnum, Href<string>> = {
+  //   [HistoryType.SESSION]: "/sessionFullHistory" as Href<string>,
+  //   [HistoryType.QUESTION]: "/questionFullHistory" as Href<string>,
+  // };
+
+  // const handleNavigation = () => {
+  //   const route = routesMap[historyType];
+  //   if (route) {
+  //     router.push(route);
+  //   }
+  // };
+
+  const navigation = useNavigation<TabsNavigationProp>();
 
   const { sessions, questions } = useSelector(
     (state: RootState) => state.history
   );
 
-  const routesMap: Record<HistoryTypeEnum, Href<string>> = {
-    [HistoryType.SESSION]: "/sessionFullHistory" as Href<string>,
-    [HistoryType.QUESTION]: "/questionFullHistory" as Href<string>,
-  };
+  // Define the routes mapping
+  // const routesMap = {
+  //   [historyType]: "sessionFullHistory",
+  //   [historyType]: "questionFullHistory",
+  // };
 
   const handleNavigation = () => {
-    const route = routesMap[historyType];
-    if (route) {
-      router.push(route);
-    }
+    // const route = routesMap[historyType];
+    // if (route) {
+    //   navigation.navigate(route as never); // Add type assertion if necessary
+    // }
+    navigation.navigate("(tabs)", {
+      screen: historyType as keyof TabsStackParamList,
+    });
   };
 
   return (

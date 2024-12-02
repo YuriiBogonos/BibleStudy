@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     paddingVertical: 15,
     alignItems: "center",
-    marginTop: 10,
+    marginVertical: 14,
   },
   buttonDisabled: {
     backgroundColor: Colors.DarkBlue + "80",

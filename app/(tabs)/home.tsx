@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import { ActivityIndicator, Alert } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Button,
+  TouchableOpacity,
+} from "react-native";
 import { View, Text, StyleSheet } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "expo-router";
@@ -17,12 +22,15 @@ import { getUsernameFromEmail } from "@/services/formatMailName";
 import PlusIconButton from "@/assets/images/PlusIconButton";
 import { RootState } from "@/store/store";
 import { IConvertedSessions, setSessions } from "@/store/slices/historySlice";
-import { useFocusEffect } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { TabsNavigationProp } from "@/types/SessionsTypes";
 
 export default function MainScreen() {
   const router = useRouter();
   const dispatch = useDispatch();
   const getUserSessions = useGetUserSessions();
+
+  const navigation = useNavigation<TabsNavigationProp>();
 
   const user = useSelector((state: RootState) => state.auth.user);
   const sessions = useSelector((state: RootState) => state.history.sessions);
@@ -100,12 +108,15 @@ export default function MainScreen() {
           Icon={PlusIconButton}
           text="Start new session"
         />
+
         <View style={styles.sessionHistory}>
           <HistoryList
             items={sessions?.length ? sessions : []}
             isLoading={isLoading}
             error={error}
             historyType={HistoryType.SESSION}
+            shouldDisabledItem={isLoading}
+            // returnToFullSessionHistory={false}
           />
         </View>
       </View>

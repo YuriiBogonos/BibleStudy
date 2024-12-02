@@ -1,7 +1,7 @@
 import React, { FC, useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { router } from "expo-router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AntDesign from "@expo/vector-icons/AntDesign";
 
 import ScreenWrapper from "@/components/ScreenWrapper";
@@ -15,19 +15,21 @@ import { deleteAccountService } from "@/services/authServices/DeleteAccountServi
 import DeleteAccountIcon from "@/assets/images/DeleteAccountIcon";
 import { Colors } from "@/types/Colors";
 import { Typography } from "@/types/Typography";
+import { signOutSuccess } from "@/store/slices/authSlice";
 
 const AccountSettings: FC = () => {
+  const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.auth.user);
   const [isModalVisible, setModalVisible] = useState(false);
 
   const handleDeleteAccount = async () => {
     const result = await deleteAccountService();
     if (result.success) {
+      dispatch(signOutSuccess());
       Alert.alert(
         "Account Deleted",
         "Your account has been successfully deleted."
       );
-      router.replace("/signIn");
     } else {
       Alert.alert("Error", result.error || "Failed to delete account.");
     }
@@ -55,14 +57,19 @@ const AccountSettings: FC = () => {
 
   return (
     <>
-      <ScreenWrapper>
+      <View style={styles.content}>
         <View style={styles.container}>
           <CustomHeader screenTitle="Account Settings" />
           <AccountSettingsForm />
 
-          <TouchableOpacity onPress={handleChangePassword}>
-            <Text style={styles.changePasswordLink}>Change password</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity
+              onPress={handleChangePassword}
+              style={styles.changeUserInfoButton}
+            >
+              <Text style={styles.changePasswordLink}>Change password</Text>
+            </TouchableOpacity>
+          </View>
 
           <TouchableOpacity
             style={styles.deleteButton}
@@ -77,7 +84,7 @@ const AccountSettings: FC = () => {
             <AntDesign name="right" size={14} color={Colors.DarkBlue} />
           </TouchableOpacity>
         </View>
-      </ScreenWrapper>
+      </View>
       <CustomModal
         visible={isModalVisible}
         onClose={() => setModalVisible(false)}
@@ -95,15 +102,18 @@ const AccountSettings: FC = () => {
 };
 
 const styles = StyleSheet.create({
+  content: {
+    backgroundColor: "white",
+    flex: 1,
+  },
   container: {
     width: "100%",
     paddingHorizontal: 20,
   },
-
   changePasswordLink: {
     color: Colors.DarkBlue,
     fontSize: 16,
-    textAlign: "right",
+    textAlign: "center",
     marginVertical: 10,
   },
   deleteButton: {
@@ -124,6 +134,13 @@ const styles = StyleSheet.create({
   deleteText: {
     marginLeft: 10,
     color: Colors.Black,
+  },
+  buttonWrapper: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  changeUserInfoButton: {
+    flexDirection: "row",
   },
 });
 

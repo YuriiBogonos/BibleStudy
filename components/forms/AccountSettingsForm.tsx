@@ -88,7 +88,6 @@ const AccountSettingsForm = () => {
         }
       }
 
-      // Update full name if it has changed
       if (user.displayName !== value.fullName) {
         const update = await updateUserFullName(userRef, value.fullName);
 
@@ -175,18 +174,20 @@ const AccountSettingsForm = () => {
             <Text style={styles.errorText}>{errors.email}</Text>
           )}
 
-          <TouchableOpacity
-            disabled={changeUserInfoLoading}
-            onPress={() => handleSubmit()}
-            style={styles.changeUserInfoButton}
-          >
-            <Text style={styles.changeUserInfoText}>Change user info</Text>
-            {changeUserInfoLoading && (
-              <View style={styles.loader}>
-                <ActivityIndicator color={"black"} />
-              </View>
-            )}
-          </TouchableOpacity>
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity
+              disabled={changeUserInfoLoading}
+              onPress={() => handleSubmit()}
+              style={styles.changeUserInfoButton}
+            >
+              {changeUserInfoLoading && (
+                <View style={styles.loader}>
+                  <ActivityIndicator color={"black"} />
+                </View>
+              )}
+              <Text style={styles.changeUserInfoText}>Change user info</Text>
+            </TouchableOpacity>
+          </View>
 
           {changeUserInfoError && (
             <View>
@@ -227,16 +228,19 @@ const styles = StyleSheet.create({
   },
   loader: {
     paddingTop: 10,
-    marginLeft: 10,
+    marginRight: 10,
+  },
+  buttonWrapper: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
   changeUserInfoButton: {
     flexDirection: "row",
-    justifyContent: "flex-end",
   },
   changeUserInfoText: {
     color: Colors.DarkBlue,
     fontSize: 16,
-    textAlign: "right",
+    textAlign: "center",
     marginVertical: 10,
   },
 });

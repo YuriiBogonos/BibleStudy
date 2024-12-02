@@ -1,4 +1,10 @@
-import { View, Text, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import QuestionsIcon from "@/assets/images/QuestionsIcon";
 import VersesIcon from "@/assets/images/VersesIcon";
 import NivIcon from "@/assets/images/NivIcon";
@@ -7,9 +13,18 @@ import { Typography } from "@/types/Typography";
 import { Colors } from "@/types/Colors";
 import { TopicColor } from "@/types/TopicColor";
 import { BaseHistoryItem, Session } from "@/components/ui/HistoryList/types";
+import { useState } from "react";
+import { useGetSessionById } from "@/services/SessionHistoryService";
+// import { useNavigation } from "@react-navigation/native";
+import { NavigationProp } from "@/types/SessionsTypes";
+import { getQuestionById } from "@/services/questionsHistoryService";
+import { useNavigation } from "@react-navigation/native";
+// import { useNavigation } from "expo-router";
 
 interface HistoryItemProps<T extends BaseHistoryItem> {
   item: T;
+  shouldDisabledItems?: boolean;
+  // returnToFullSessionHistory: boolean;
 }
 
 const isSession = (item: BaseHistoryItem): item is Session =>
@@ -17,11 +32,79 @@ const isSession = (item: BaseHistoryItem): item is Session =>
 
 const HistoryItem = <T extends BaseHistoryItem>({
   item,
-}: HistoryItemProps<T>) => {
+  shouldDisabledItems,
+}: // returnToFullSessionHistory,
+HistoryItemProps<T>) => {
+  const navigation = useNavigation<NavigationProp>();
+  const getSessionById = useGetSessionById();
+
+  const [getSessionLoading, setGetSessionLoading] = useState<boolean>(false);
+  const [getSessionError, setGetSessionError] = useState<string>("");
+
+  const getSessionInfo = async () => {
+    try {
+      setGetSessionLoading(true);
+      setGetSessionError("");
+      if (isSession(item)) {
+        const session = await getSessionById(item.id);
+
+        if (!session) {
+          throw new Error("Invalid session generation result");
+        }
+
+        navigation.navigate("(sessions)", {
+          screen: "answersSession",
+          params: {
+            sessionData: session,
+            // returnToFullSessionHistory: returnToFullSessionHistory,
+          },
+        });
+
+        return;
+      }
+
+      const question = await getQuestionById(item.id);
+
+      if (!question) {
+        throw new Error("Invalid question generation result");
+      }
+      const preparedData = {
+        ...question,
+        verses: JSON.stringify(question.verses),
+        // ...question,
+      };
+
+      navigation.navigate("(sessions)", {
+        screen: "questionResult",
+        params: {
+          questionsData: preparedData,
+          // returnToQuestionPage: returnToFullSessionHistory,
+        },
+      });
+    } catch (error: any) {
+      console.log("error in getSessionById ====>", error);
+      setGetSessionError(error.message);
+    } finally {
+      setGetSessionLoading(false);
+    }
+  };
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      onPress={getSessionInfo}
+      disabled={getSessionLoading || shouldDisabledItems}
+    >
       <View style={styles.info}>
-        <Text style={[Typography.bodyMedium, styles.title]}>{item.title}</Text>
+        <View style={styles.cardHeader}>
+          <Text style={[Typography.bodyMedium, styles.title]}>
+            {item.title}
+          </Text>
+          {getSessionLoading && (
+            <View>
+              <ActivityIndicator />
+            </View>
+          )}
+        </View>
 
         <View style={styles.detailRow}>
           {isSession(item) && (
@@ -68,7 +151,7 @@ const HistoryItem = <T extends BaseHistoryItem>({
           </Text>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -127,6 +210,11 @@ const styles = StyleSheet.create({
   date: {
     color: Colors.DarkGray,
     marginLeft: "auto",
+  },
+  cardHeader: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
 });
 

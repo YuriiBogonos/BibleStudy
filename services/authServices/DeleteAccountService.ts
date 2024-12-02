@@ -11,11 +11,13 @@ export const deleteAccountService = async () => {
 
     const userId = user.uid;
 
+    // Delete user data from Firestore including sessions and questions
     const firestoreResult = await deleteUserFromFirestoreService(userId);
     if (!firestoreResult.success) {
       return { success: false, error: firestoreResult.error };
     }
 
+    // Delete user from Firebase Auth
     const authResult = await deleteUserFromAuthService();
     if (!authResult.success) {
       return { success: false, error: authResult.error };
@@ -25,7 +27,7 @@ export const deleteAccountService = async () => {
   } catch (error: any) {
     console.log(
       "Error occurred during account deletion:",
-      error.message || error,
+      error.message || error
     );
     return {
       success: false,
@@ -34,12 +36,42 @@ export const deleteAccountService = async () => {
   }
 };
 
-export const deleteUserFromFirestoreService = async (documentId: string) => {
+export const deleteUserFromFirestoreService = async (userId: string) => {
   try {
-    await firestore().collection("users").doc(documentId).delete();
+    const db = firestore();
+
+    // Delete user document
+    const userRef = db.collection("users").doc(userId);
+    await userRef.delete();
+    console.log(`Firestore user with document ID ${userId} has been deleted.`);
+
+    // Delete all sessions related to the user
+    const sessionsQuerySnapshot = await db
+      .collection("sessions")
+      .where("userId", "==", userId)
+      .get();
+
+    const batch = db.batch();
+    sessionsQuerySnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    // Delete all questions related to the user
+    const questionsQuerySnapshot = await db
+      .collection("questions")
+      .where("userId", "==", userId)
+      .get();
+
+    questionsQuerySnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    // Commit the batch to delete sessions and questions
+    await batch.commit();
     console.log(
-      `Firestore user with document ID ${documentId} has been deleted.`,
+      `All sessions and questions for user ${userId} have been deleted.`
     );
+
     return { success: true };
   } catch (error: any) {
     console.log("Error deleting user from Firestore:", error.message || error);
@@ -72,7 +104,7 @@ export const deleteUserFromAuthService = async () => {
     }
     console.log(
       "Error deleting user from Firebase Auth:",
-      error.message || error,
+      error.message || error
     );
     return {
       success: false,

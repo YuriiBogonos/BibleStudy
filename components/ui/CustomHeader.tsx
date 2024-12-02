@@ -1,18 +1,20 @@
 import React from "react";
 import { Header } from "@rneui/themed";
+import { StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 import { Colors } from "@/types/Colors";
-import { SafeAreaView, StyleSheet } from "react-native";
 import { Typography } from "@/types/Typography";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { useRouter } from "expo-router";
 
 interface CustomHeaderProps {
   screenTitle: string;
+  path?: string;
 }
 
-const CustomHeader: React.FC<CustomHeaderProps> = ({ screenTitle }) => {
-  // const navigation: any = useNavigation();
-  const router = useRouter();
+const CustomHeader: React.FC<CustomHeaderProps> = ({ screenTitle, path }) => {
+  const navigation = useNavigation<any>();
+  // const router = useRouter();
 
   return (
     <Header
@@ -21,7 +23,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ screenTitle }) => {
           name="left"
           size={20}
           color={Colors.DarkBlue}
-          onPress={() => router.replace("/account")}
+          onPress={navigation.goBack}
         />
       }
       centerComponent={{

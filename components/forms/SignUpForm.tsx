@@ -164,14 +164,16 @@ const SignUpForm: React.FC = () => {
             </View>
           )}
 
-          <TouchableOpacity onPress={() => router.replace("/signIn")}>
-            <Text style={[Typography.smallRegular, styles.loginText]}>
-              Already have an account?
-            </Text>
-            <Text style={[Typography.smallRegular, styles.loginLink]}>
-              Log in
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.buttonWrapper}>
+            <TouchableOpacity onPress={() => router.replace("/signIn")}>
+              <Text style={[Typography.smallRegular, styles.loginText]}>
+                Already have an account?
+              </Text>
+              <Text style={[Typography.smallRegular, styles.loginLink]}>
+                Log in
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     </Formik>
@@ -204,14 +206,14 @@ const styles = StyleSheet.create({
   },
   loginText: {
     textAlign: "center",
-    marginTop: 20,
+    marginTop: 10,
     color: Colors.Black,
   },
   loginLink: {
     textAlign: "center",
     color: Colors.Black,
     textDecorationLine: "underline",
-    marginVertical: 20,
+    marginVertical: 10,
   },
   loader: {
     position: "absolute",
@@ -222,6 +224,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "red",
     marginTop: 14,
+  },
+  buttonWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
   },
 });
 

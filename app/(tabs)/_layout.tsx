@@ -37,6 +37,7 @@ export default function TabLayout() {
         }}
         component={MainScreen}
       />
+
       <Tab.Screen
         name="questions"
         options={{
@@ -46,6 +47,7 @@ export default function TabLayout() {
         }}
         component={Questions}
       />
+
       <Tab.Screen
         name="account"
         options={{
@@ -55,6 +57,7 @@ export default function TabLayout() {
         }}
         component={Account}
       />
+
       <Tab.Screen
         name="accountSettings"
         options={{
@@ -73,6 +76,7 @@ export default function TabLayout() {
         }}
         component={QuestionHistoryScreen}
       />
+
       <Tab.Screen
         name="sessionFullHistory"
         options={{
@@ -82,6 +86,7 @@ export default function TabLayout() {
         }}
         component={SessionHistoryScreen}
       />
+
       <Tab.Screen
         name="multipleSession"
         options={{
