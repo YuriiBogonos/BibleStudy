@@ -28,13 +28,13 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>bibleapp</string>
-          <string>com.Rueben.BibleStudy</string>
+          <string>com.biblestudy.biblestudy</string>
         </array>
       </dict>
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.googleusercontent.apps.835644722765-7oe34mfvsdrg32mi40qank1vu3vdrikn</string>
+          <string>com.googleusercontent.apps.835644722765-9lg3l91fvkvqueefgahnqq8pao7glv6s</string>
         </array>
       </dict>
     </array>
@@ -51,6 +51,9 @@
     </dict>
     <key>NSUserActivityTypes</key>
     <array>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>
       <string>$(PRODUCT_BUNDLE_IDENTIFIER).expo.index_route</string>

@@ -31,6 +31,8 @@ const SignIn: FC = () => {
   const signInWithApple = async () => {
     setAppleLoginLoading(true);
     setFirebaseError("");
+
+    setAppleLoginLoading(false);
   };
 
   return (
