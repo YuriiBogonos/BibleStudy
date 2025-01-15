@@ -393,7 +393,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = CP446YJ65A;
+				DEVELOPMENT_TEAM = F7C38Z65MT;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -415,7 +415,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.biblestudy.biblestudy;
-				PRODUCT_NAME = "BibleStudy";
+				PRODUCT_NAME = BibleStudy;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "BibleStudy/BibleStudy-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -435,7 +435,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = CP446YJ65A;
+				DEVELOPMENT_TEAM = F7C38Z65MT;
 				INFOPLIST_FILE = BibleStudy/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Bible Study";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
@@ -452,7 +452,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.biblestudy.biblestudy;
-				PRODUCT_NAME = "BibleStudy";
+				PRODUCT_NAME = BibleStudy;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "BibleStudy/BibleStudy-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

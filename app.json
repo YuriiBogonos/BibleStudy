@@ -15,7 +15,8 @@
     "ios": {
       "googleServicesFile": "./GoogleService-Info.plist",
       "supportsTablet": true,
-      "bundleIdentifier": "com.biblestudy.biblestudy"
+      "bundleIdentifier": "com.biblestudy.biblestudy",
+      "usesAppleSignIn": true
     },
     "android": {
       "adaptiveIcon": {

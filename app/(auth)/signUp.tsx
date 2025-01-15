@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Platform } from "react-native";
 import { Typography } from "@/types/Typography";
 import HomeGardenSvg from "@/assets/images/HomeGarden";
 import AuthButton from "@/components/ui/AuthButton";
@@ -8,6 +8,7 @@ import AppleIcon from "@/assets/images/AppleIcon";
 import ScreenWrapper from "@/components/ScreenWrapper";
 import SignUpForm from "@/components/forms/SignUpForm";
 import { signInWithGoogleFunc } from "@/services/authServices/GoogleSignIn";
+import { signInWithAppleFunc } from "@/services/AppleSignIn";
 
 const SignUp: FC = () => {
   const [googleLoginLoading, setGoogleLoginLoading] = useState<boolean>(false);
@@ -24,7 +25,17 @@ const SignUp: FC = () => {
   const signInWithApple = async () => {
     setAppleLoginLoading(true);
     setFirebaseError("");
+
+    try {
+      await signInWithAppleFunc({ setFirebaseError });
+    } catch (error) {
+      console.log("error in signInWithAppleFunc ===>", error);
+    } finally {
+      setAppleLoginLoading(false);
+    }
   };
+
+  console.log("platform os ====>", Platform.OS);
 
   return (
     <ScreenWrapper>
@@ -46,14 +57,14 @@ const SignUp: FC = () => {
             onPress={signInWithGoogle}
             isLoading={googleLoginLoading}
           />
-          <AuthButton
-            Icon={AppleIcon}
-            text="Sign up with Apple"
-            onPress={() => {
-              console.log("Sign up with Apple");
-            }}
-            isLoading={appleLoginLoading}
-          />
+          {Platform.OS === "ios" && (
+            <AuthButton
+              Icon={AppleIcon}
+              text="Sign up with Apple"
+              onPress={signInWithApple}
+              isLoading={appleLoginLoading}
+            />
+          )}
         </View>
 
         {firebaseError && (

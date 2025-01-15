@@ -22,6 +22,7 @@ import { changeFullName } from "@/store/slices/authSlice";
 import { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 import { sendVerificationEmail } from "@/services/authServices/SignUpService";
+import { getUsernameFromEmail } from "@/services/formatMailName";
 
 // interface AccountSettingsFormProps {
 //   initialValues: { fullName: string; email: string };
@@ -37,7 +38,11 @@ const AccountSettingsForm = () => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   const initialValues = {
-    fullName: user?.displayName || "Example Name",
+    fullName: user?.displayName
+      ? user?.displayName
+      : user && user.email
+      ? getUsernameFromEmail(user?.email)
+      : "user",
     email: user?.email || "email.example@gmail.com",
   };
 
