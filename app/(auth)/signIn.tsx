@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Platform } from "react-native";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import auth from "@react-native-firebase/auth";
 
@@ -13,6 +13,7 @@ import ChildrenInGarden from "@/assets/images/ChildrenWithGarden";
 
 import { Typography } from "@/types/Typography";
 import { signInWithGoogleFunc } from "@/services/authServices/GoogleSignIn";
+import { signInWithAppleFunc } from "@/services/AppleSignIn";
 
 // import { signInWithGoogleFunc } from "@/services/authServices/GoogleSignIn";
 
@@ -32,7 +33,13 @@ const SignIn: FC = () => {
     setAppleLoginLoading(true);
     setFirebaseError("");
 
-    setAppleLoginLoading(false);
+    try {
+      await signInWithAppleFunc({ setFirebaseError });
+    } catch (error) {
+      console.log("error in signInWithAppleFunc ===>", error);
+    } finally {
+      setAppleLoginLoading(false);
+    }
   };
 
   return (
@@ -49,12 +56,14 @@ const SignIn: FC = () => {
             onPress={signInWithGoogle}
             isLoading={googleLoginLoading}
           />
-          <AuthButton
-            Icon={AppleIcon}
-            text="Sign in with Apple"
-            onPress={signInWithApple}
-            isLoading={appleLoginLoading}
-          />
+          {Platform.OS === "ios" && (
+            <AuthButton
+              Icon={AppleIcon}
+              text="Sign in with Apple"
+              onPress={signInWithApple}
+              isLoading={appleLoginLoading}
+            />
+          )}
         </View>
 
         {firebaseError && (
