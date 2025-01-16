@@ -1,23 +1,30 @@
-import { Alert, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { useState } from "react";
+import {
+  Alert,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { useRouter } from "expo-router";
 
 import { View } from "@/components/Themed";
 import SettingsItem from "@/components/ui/AccountSettingsItem";
+import CustomModal from "@/components/ui/CustomModal";
+import ScreenWrapper from "@/components/ScreenWrapper";
+
 import AccountSettingsIcon from "@/assets/images/AccountSettingsIcon";
 import AccountSettingsAboutIcon from "@/assets/images/AccountSettingsAboutIcon";
 import AccountSettingSupportIcon from "@/assets/images/AccountSettingSupportIcon";
 import AccountSettingsWebsiteIcon from "@/assets/images/AccountSettingsWebsiteIcon";
 import AccountSettingsSignOutIcon from "@/assets/images/AccountSettingsSignOutIcon";
-import ScreenWrapper from "@/components/ScreenWrapper";
-import { useDispatch } from "react-redux";
-import { useRouter } from "expo-router";
+import SignOutIcon from "@/assets/images/SignOutIcon";
+
 import { signOutService } from "@/services/authServices/SignOutService";
 import { signOutFailure, signOutSuccess } from "@/store/slices/authSlice";
-import CustomButton from "@/components/ui/CustomButton";
 import { Typography } from "@/types/Typography";
-import CustomModal from "@/components/ui/CustomModal";
-import { useState } from "react";
-import SignOutIcon from "@/assets/images/SignOutIcon";
-import { useNavigation } from "@react-navigation/native";
 import { TabsNavigationProp } from "@/types/SessionsTypes";
 
 export default function Account() {
@@ -56,6 +63,7 @@ export default function Account() {
   };
 
   return (
+    // <SafeAreaView style={{ flex: 1 }}>
     <ScreenWrapper>
       <View style={styles.container}>
         <Text style={Typography.h1}>User</Text>
@@ -102,6 +110,8 @@ export default function Account() {
         showWarning={false}
         icon={<SignOutIcon />}
       />
+
+      {/* </SafeAreaView> */}
     </ScreenWrapper>
   );
 }
@@ -109,6 +119,7 @@ export default function Account() {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
+    height: "100%",
     paddingHorizontal: 20,
   },
   signOutButton: {

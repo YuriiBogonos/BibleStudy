@@ -48,9 +48,6 @@ GoogleSignin.configure({
 export default function RootLayout() {
   const [loaded, error] = useFonts({});
 
-  const [endAnimation, setEndAnimation] = useState<boolean>(true);
-  const [isAnimationComplete, setIsAnimationComplete] = useState(true);
-
   const [isAppLoaded, setIsAppLoaded] = useState(false);
 
   useEffect(() => {
@@ -110,14 +107,7 @@ const RootLayoutNav = ({ isAppLoaded }: { isAppLoaded: boolean }) => {
   }, [dispatch]);
 
   if (appLoading) {
-    return (
-      <CrossLoadingIcon
-        // setEndAnimation={setEndAnimation}
-        // setIsAnimationComplete={setIsAnimationComplete}
-        // isAnimationComplete={isAnimationComplete}
-        isAppLoaded={isAppLoaded}
-      />
-    );
+    return <CrossLoadingIcon isAppLoaded={isAppLoaded} />;
   }
 
   return (

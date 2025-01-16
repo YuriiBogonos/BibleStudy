@@ -35,8 +35,6 @@ const SignUp: FC = () => {
     }
   };
 
-  console.log("platform os ====>", Platform.OS);
-
   return (
     <ScreenWrapper>
       <View style={styles.container}>
