@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  Platform,
 } from "react-native";
 import { Question } from "@/api/openaiApi";
 import { AntDesign } from "@expo/vector-icons";
@@ -122,7 +123,9 @@ export default function AnswersSession() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView
+      style={[styles.safeArea, Platform.OS === "android" && { paddingTop: 40 }]}
+    >
       <View style={styles.container}>
         <CustomHeader screenTitle={"Active Session"} />
 

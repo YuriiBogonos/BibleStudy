@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet, Platform } from "react-native";
 import { BaseHistoryItem, Session } from "@/components/ui/HistoryList/types";
 import HistoryItem from "@/components/ui/HistoryList/HistoryItem";
 import CustomHeader from "@/components/ui/CustomHeader";
@@ -13,7 +13,12 @@ const CustomHistoryScreen: FC<
   CustomHistoryScreenProps<BaseHistoryItem | Session>
 > = ({ data, screenTitle }) => {
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        Platform.OS === "android" && { paddingTop: 40 },
+      ]}
+    >
       <CustomHeader
         screenTitle={screenTitle}
         // path={screenTitle === "Question history" ? "questions" : "home"}ц

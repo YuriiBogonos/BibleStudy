@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Alert } from "react-native";
+import { Alert, StyleSheet } from "react-native";
 import { View, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -15,7 +15,7 @@ import PlusIconButton from "@/assets/images/PlusIconButton";
 import { RootState } from "@/store/store";
 import { IConvertedSessions, setSessions } from "@/store/slices/historySlice";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { styles } from "./home";
+
 import { HistoryNavigationProp } from "@/types/SessionsTypes";
 
 export default function MainScreen() {
@@ -86,7 +86,7 @@ export default function MainScreen() {
 
   return (
     <ScreenWrapper>
-      <View style={styles.container}>
+      <View style={[[styles.container]]}>
         <Text style={Typography.homeTitle}>
           {`God Bless You, ${
             user?.displayName
@@ -116,3 +116,13 @@ export default function MainScreen() {
     </ScreenWrapper>
   );
 }
+
+export const styles = StyleSheet.create({
+  container: {
+    width: "100%",
+    paddingHorizontal: 20,
+  },
+  sessionHistory: {
+    paddingVertical: 24,
+  },
+});
