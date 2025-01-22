@@ -80,15 +80,15 @@ export const useUpdateSession = () => {
   );
 };
 
-export const useDeleteSession = () => {
-  return useCallback(async (sessionId: string): Promise<void> => {
-    try {
-      await firestore().collection(SESSIONS_COLLECTION).doc(sessionId).delete();
-    } catch (error) {
-      console.error("Error deleting session:", error);
-      throw new Error("Failed to delete session");
-    }
-  }, []);
+export const removeSessionBySessionId = async (
+  sessionId: string
+): Promise<void> => {
+  try {
+    await firestore().collection(SESSIONS_COLLECTION).doc(sessionId).delete();
+  } catch (error) {
+    console.error("Error removing session:", error);
+    throw new Error("Failed to remove session.");
+  }
 };
 
 // Хук для отримання сесії за ID

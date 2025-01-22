@@ -83,18 +83,22 @@ const VerseResults = () => {
 
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           {parsedVerses.map((verse, index: number) => (
-            <View key={index} style={styles.verseCard}>
+            <TouchableOpacity
+              key={index}
+              style={styles.verseCard}
+              onPress={() => toggleExpand(index)}
+            >
               <View style={styles.verseHeader}>
                 <Text style={[Typography.smallBold, styles.verseReference]}>
                   {`${verse.book} : ${verse.chapter}`}
                 </Text>
-                <TouchableOpacity onPress={() => toggleExpand(index)}>
+                <View>
                   <AntDesign
                     name={expandedVerses[index] ? "up" : "down"}
                     size={14}
                     color={Colors.DarkBlue}
                   />
-                </TouchableOpacity>
+                </View>
               </View>
               <Text style={[Typography.verseText, styles.verseText]}>
                 {expandedVerses[index]
@@ -104,7 +108,7 @@ const VerseResults = () => {
               <View style={styles.versesNumberContainer}>
                 <Text style={styles.verseNumber}>Verses: {verse.verse}</Text>
               </View>
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
         <SessionNavigation

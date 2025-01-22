@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   View,
   Text,
@@ -5,25 +6,42 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+
 import QuestionsIcon from "@/assets/images/QuestionsIcon";
 import VersesIcon from "@/assets/images/VersesIcon";
 import NivIcon from "@/assets/images/NivIcon";
 import ProcessIcon from "@/assets/images/ProcessIcon";
-import { Typography } from "@/types/Typography";
+import ThreeDotIcon from "@/assets/images/ThreeDotIcon";
+import ShareIcon from "@/assets/images/ShareIcon";
+import RemoveIcon from "@/assets/images/RemoveIcon";
+
 import { Colors } from "@/types/Colors";
 import { TopicColor } from "@/types/TopicColor";
-import { BaseHistoryItem, Session } from "@/components/ui/HistoryList/types";
-import { useState } from "react";
-import { useGetSessionById } from "@/services/SessionHistoryService";
-// import { useNavigation } from "@react-navigation/native";
+import { Typography } from "@/types/Typography";
 import { NavigationProp } from "@/types/SessionsTypes";
-import { getQuestionById } from "@/services/questionsHistoryService";
-import { useNavigation } from "@react-navigation/native";
-// import { useNavigation } from "expo-router";
+
+import {
+  BaseHistoryItem,
+  HistoryType,
+  Session,
+} from "@/components/ui/HistoryList/types";
+import {
+  getQuestionById,
+  removeQuestionBySessionId,
+} from "@/services/questionsHistoryService";
+
+import {
+  removeSessionBySessionId,
+  useGetSessionById,
+} from "@/services/SessionHistoryService";
+import CustomModal from "../CustomModal";
 
 interface HistoryItemProps<T extends BaseHistoryItem> {
   item: T;
   shouldDisabledItems?: boolean;
+  loadSessions: () => void;
+  historyType?: string;
   // returnToFullSessionHistory: boolean;
 }
 
@@ -33,6 +51,8 @@ const isSession = (item: BaseHistoryItem): item is Session =>
 const HistoryItem = <T extends BaseHistoryItem>({
   item,
   shouldDisabledItems,
+  loadSessions,
+  historyType,
 }: // returnToFullSessionHistory,
 HistoryItemProps<T>) => {
   const navigation = useNavigation<NavigationProp>();
@@ -41,7 +61,13 @@ HistoryItemProps<T>) => {
   const [getSessionLoading, setGetSessionLoading] = useState<boolean>(false);
   const [getSessionError, setGetSessionError] = useState<string>("");
 
+  const [openedOptionsBlock, setOpenedOptionsBlock] = useState<boolean>(false);
+
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
   const getSessionInfo = async () => {
+    setOpenedOptionsBlock(false);
+
     try {
       setGetSessionLoading(true);
       setGetSessionError("");
@@ -88,6 +114,16 @@ HistoryItemProps<T>) => {
       setGetSessionLoading(false);
     }
   };
+
+  const removeSession = async () => {
+    historyType === HistoryType.SESSION
+      ? await removeSessionBySessionId(item.id)
+      : await removeQuestionBySessionId(item.id);
+
+    setModalVisible(false);
+
+    loadSessions();
+  };
   return (
     <TouchableOpacity
       style={styles.card}
@@ -102,6 +138,37 @@ HistoryItemProps<T>) => {
           {getSessionLoading && (
             <View>
               <ActivityIndicator />
+            </View>
+          )}
+
+          {!getSessionLoading && (
+            <TouchableOpacity
+              style={styles.optionButton}
+              onPress={() => setOpenedOptionsBlock(!openedOptionsBlock)}
+            >
+              <ThreeDotIcon />
+            </TouchableOpacity>
+          )}
+
+          {openedOptionsBlock && (
+            <View style={styles.optionBlock}>
+              {/* <TouchableOpacity style={styles.optionBlockButton}>
+                <Text style={[Typography.bodyRegular]}>Share the session</Text>
+                <View>
+                  <ShareIcon />
+                </View>
+              </TouchableOpacity> */}
+
+              <TouchableOpacity
+                style={styles.optionBlockButton}
+                onPress={() => {
+                  setOpenedOptionsBlock(false);
+                  setModalVisible(true);
+                }}
+              >
+                <Text style={[Typography.bodyRegular]}>Remove</Text>
+                <RemoveIcon />
+              </TouchableOpacity>
             </View>
           )}
         </View>
@@ -151,18 +218,33 @@ HistoryItemProps<T>) => {
           </Text>
         </View>
       </View>
+
+      <CustomModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onConfirm={removeSession}
+        message={`Would you like to remove the ${
+          historyType === HistoryType.SESSION ? "session" : "question"
+        }?`}
+        confirmText="Yes"
+        cancelText="Cancel"
+        showWarning={false}
+      />
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   card: {
+    position: "relative",
+
     backgroundColor: Colors.White,
     padding: 16,
     borderRadius: 8,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+
     shadowColor: Colors.Black,
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.29,
@@ -184,12 +266,14 @@ const styles = StyleSheet.create({
     gap: 14,
     alignItems: "center",
     marginBottom: 8,
+    zIndex: -1,
   },
   detail: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
     marginBottom: 8,
+    zIndex: -1,
   },
   topicDateContainer: {
     flexDirection: "row",
@@ -197,6 +281,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginTop: 8,
+    zIndex: -1,
   },
   topicBlock: {
     paddingHorizontal: 8,
@@ -215,6 +300,42 @@ const styles = StyleSheet.create({
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
+    marginBottom: 10,
+  },
+  optionButton: {
+    width: 30,
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  optionBlock: {
+    position: "absolute",
+    top: 30,
+    right: -10,
+
+    paddingVertical: 4,
+    paddingHorizontal: 14,
+
+    width: 240,
+
+    borderRadius: 16,
+    backgroundColor: Colors.White,
+    zIndex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+
+    shadowColor: Colors.Black,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.29,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  optionBlockButton: {
+    width: "100%",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    height: 44,
+    // backgroundColor: "pink",
   },
 });
 

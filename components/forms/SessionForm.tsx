@@ -37,7 +37,14 @@ const initialFocusTopics = [
 ];
 
 const BibleVersions = ["NIV", "KJV", "ESV"];
-const ComplexityLevels = ["Study", "Meditation", "Devotional"];
+const ComplexityLevels = [
+  "Kids",
+  "Teen",
+  "Family",
+  "New to Faith",
+  "Study",
+  "Deep Dive",
+];
 
 const SessionForm: React.FC = () => {
   const [generateSession] = useGenerateSessionMutation();
