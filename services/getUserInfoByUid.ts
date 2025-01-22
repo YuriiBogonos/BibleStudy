@@ -7,7 +7,7 @@ export const getUserInfoByUid = async (uid: string) => {
     if (userDoc.exists) {
       const userData = userDoc.data();
 
-      return userData!.fullName as string;
+      return userData?.fullName as string;
     } else {
       console.log("No user found with the given UID.");
       return null;

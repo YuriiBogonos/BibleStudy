@@ -167,18 +167,22 @@ export default function AnswersSession() {
 
               {questions[currentIndex].bible_verse.map(
                 (verse: any, index: number) => (
-                  <View key={index} style={styles.verseBlock}>
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.verseBlock}
+                    onPress={() => toggleExpand(index)}
+                  >
                     <View style={styles.verseHeader}>
                       <Text style={[Typography.smallBold, styles.verseItem]}>
                         {`${verse.book} ${verse.chapter}`}
                       </Text>
-                      <TouchableOpacity onPress={() => toggleExpand(index)}>
+                      <View>
                         <AntDesign
                           name={expandedVerses[index] ? "up" : "down"}
                           size={14}
                           color={Colors.DarkBlue}
                         />
-                      </TouchableOpacity>
+                      </View>
                     </View>
                     <Text style={[Typography.verseText, styles.answerText]}>
                       {expandedVerses[index]
@@ -190,7 +194,7 @@ export default function AnswersSession() {
                         Verses: {verse.verses}
                       </Text>
                     </View>
-                  </View>
+                  </TouchableOpacity>
                 )
               )}
             </View>

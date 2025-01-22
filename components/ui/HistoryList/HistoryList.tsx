@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
 import HistoryHeader from "./HistoryHeader";
 import HistoryItem from "./HistoryItem";
@@ -16,6 +16,7 @@ interface HistoryListProps<T extends BaseHistoryItem> {
   error?: string | null;
   historyType: HistoryTypeEnum | string;
   shouldDisabledItem: boolean;
+  loadSessions: () => void;
 }
 
 const HistoryList = <T extends BaseHistoryItem>({
@@ -23,6 +24,7 @@ const HistoryList = <T extends BaseHistoryItem>({
   isLoading = false,
   historyType,
   shouldDisabledItem,
+  loadSessions,
 }: // returnToFullSessionHistory,
 HistoryListProps<T>) => {
   // const isSession = (item: BaseHistoryItem): item is Session =>
@@ -64,6 +66,8 @@ HistoryListProps<T>) => {
               <HistoryItem
                 item={item}
                 shouldDisabledItems={shouldDisabledItem}
+                loadSessions={loadSessions}
+                historyType={historyType}
                 // returnToFullSessionHistory={returnToFullSessionHistory}
               />
             </View>

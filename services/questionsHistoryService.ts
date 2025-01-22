@@ -91,3 +91,14 @@ export const getQuestionById = async (
     throw new Error("Failed to get session");
   }
 };
+
+export const removeQuestionBySessionId = async (
+  sessionId: string
+): Promise<void> => {
+  try {
+    await firestore().collection(QUESTIONS_COLLECTION).doc(sessionId).delete();
+  } catch (error) {
+    console.error("Error removing session:", error);
+    throw new Error("Failed to remove session.");
+  }
+};

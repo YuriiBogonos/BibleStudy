@@ -250,7 +250,14 @@ export default function Questions() {
                 Level of complexity
               </Text>
               <CustomSelect
-                options={["Study", "Meditation", "Devotional"]}
+                options={[
+                  "Kids",
+                  "Teen",
+                  "Family",
+                  "New to Faith",
+                  "Study",
+                  "Deep Dive",
+                ]}
                 value={values.complexity}
                 onValueChange={(value) => setFieldValue("complexity", value)}
                 placeholder="Select level"
@@ -282,6 +289,7 @@ export default function Questions() {
                 isLoading={loadingQuestions}
                 historyType={HistoryType.QUESTION}
                 shouldDisabledItem={isLoading}
+                loadSessions={loadQuestions}
                 // returnToFullHistory={true}
               />
             </View>

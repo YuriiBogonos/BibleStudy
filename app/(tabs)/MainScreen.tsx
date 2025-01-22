@@ -110,6 +110,7 @@ export default function MainScreen() {
             error={error}
             historyType={HistoryType.SESSION}
             shouldDisabledItem={isLoading}
+            loadSessions={loadSessions}
           />
         </View>
       </View>
