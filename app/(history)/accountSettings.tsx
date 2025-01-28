@@ -1,5 +1,12 @@
 import React, { FC, useState } from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  Platform,
+} from "react-native";
 import { router } from "expo-router";
 import { useDispatch, useSelector } from "react-redux";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -58,7 +65,12 @@ const AccountSettings: FC = () => {
   return (
     <>
       <View style={styles.content}>
-        <View style={styles.container}>
+        <View
+          style={[
+            styles.container,
+            Platform.OS === "android" && { paddingTop: 40 },
+          ]}
+        >
           <CustomHeader screenTitle="Account Settings" />
           <AccountSettingsForm />
 

@@ -6,6 +6,7 @@ import AccountSettings from "./accountSettings";
 
 import { HistoryStackParamList } from "@/types/SessionsTypes";
 import MultipleSession from "../(tabs)/multipleSession";
+import AboutUsPage from "./aboutUsPage";
 
 const Stack = createStackNavigator<HistoryStackParamList>();
 
@@ -35,6 +36,14 @@ export default function HistoryLayout() {
           header: () => null,
         }}
         component={AccountSettings}
+      />
+      <Stack.Screen
+        name="aboutUsPage"
+        options={{
+          headerShown: false,
+          header: () => null,
+        }}
+        component={AboutUsPage}
       />
       <Stack.Screen
         name="multipleSession"

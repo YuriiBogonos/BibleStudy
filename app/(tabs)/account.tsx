@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Alert,
+  Linking,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -26,6 +27,9 @@ import { signOutService } from "@/services/authServices/SignOutService";
 import { signOutFailure, signOutSuccess } from "@/store/slices/authSlice";
 import { Typography } from "@/types/Typography";
 import { TabsNavigationProp } from "@/types/SessionsTypes";
+
+const donationLink = "https://ozgeeom.org/make-a-donation/";
+const websiteLink = "https://ozgeeom.org/";
 
 export default function Account() {
   const dispatch = useDispatch();
@@ -62,6 +66,18 @@ export default function Account() {
     setModalVisible(false);
   };
 
+  const openLink = (url: string) => {
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (supported) {
+          Linking.openURL(url);
+        } else {
+          console.error("Don't know how to open URI: " + url);
+        }
+      })
+      .catch((err) => console.error("An error occurred", err));
+  };
+
   return (
     // <SafeAreaView style={{ flex: 1 }}>
     <ScreenWrapper>
@@ -79,17 +95,21 @@ export default function Account() {
         <SettingsItem
           icon={<AccountSettingsAboutIcon />}
           text="About us"
-          onPress={() => console.log("Navigate to About us")}
+          onPress={() =>
+            navigation.navigate("(history)", {
+              screen: "aboutUsPage",
+            })
+          }
         />
         <SettingsItem
           icon={<AccountSettingSupportIcon />}
           text="Support us"
-          onPress={() => console.log("Navigate to Support us")}
+          onPress={() => openLink(donationLink)}
         />
         <SettingsItem
           icon={<AccountSettingsWebsiteIcon />}
           text="Website"
-          onPress={() => console.log("Navigate to Website")}
+          onPress={() => openLink(websiteLink)}
         />
         <TouchableOpacity
           style={styles.signOutButton}

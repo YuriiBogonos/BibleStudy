@@ -4,7 +4,7 @@
     "slug": "bible-study-dev",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/BibleStudyIcon.png",
     "scheme": "bibleapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/BibleStudyIcon.png",
         "backgroundColor": "#ffffff"
       },
       "googleServicesFile": "./google-services.json",

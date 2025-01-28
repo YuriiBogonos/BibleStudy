@@ -103,4 +103,5 @@ export type HistoryStackParamList = {
   questionFullHistory: undefined;
   accountSettings: undefined;
   multipleSession: undefined;
+  aboutUsPage: undefined;
 };
