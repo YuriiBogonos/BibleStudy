@@ -415,7 +415,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = com.biblestudy.biblestudy;
-				PRODUCT_NAME = BibleStudy;
+				PRODUCT_NAME = "BibleStudy";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "BibleStudy/BibleStudy-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -452,7 +452,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = com.biblestudy.biblestudy;
-				PRODUCT_NAME = BibleStudy;
+				PRODUCT_NAME = "BibleStudy";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "BibleStudy/BibleStudy-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
