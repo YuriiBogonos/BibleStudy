@@ -83,10 +83,10 @@ export default function Questions() {
             content: `Question: ${values.question}\nNumber of verses: ${values.verses}\nPreferred Bible: ${values.preferredBible}\nComplexity: ${values.complexity}`,
           },
         ],
-        max_tokens: 200,
+        max_tokens: 300,
       });
 
-      console.log("API Response:", result);
+      console.log("API Response on Question: ====>", result);
 
       if ("data" in result && result.data && "verses" in result.data) {
         const verses = result.data.verses || [];
@@ -178,129 +178,135 @@ export default function Questions() {
   );
 
   return (
-    <ScreenWrapper>
-      <Formik
-        initialValues={initialValues}
-        validationSchema={QuestionsGenerationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({
-          handleChange,
-          handleSubmit,
-          values,
-          errors,
-          touched,
-          setFieldValue,
-        }) => (
-          <View style={styles.container}>
-            <Text style={[Typography.homeTitle]}>Bible Inquiries</Text>
-            <View style={{ paddingVertical: 12 }}>
-              <Text style={[Typography.bodySemibold, styles.label]}>
-                Ask Your Question
-              </Text>
-              <CustomInput
-                type={InputType.Text}
-                placeholder="Type your question here..."
-                value={values.question}
-                onChangeText={handleChange("question")}
-              />
-              {touched.question && errors.question && (
-                <Text style={styles.errorText}>{errors.question}</Text>
-              )}
-            </View>
-
-            <View style={styles.versesWrapper}>
-              <View style={{ flex: 1 }}>
+    <View style={styles.wrapper}>
+      <ScreenWrapper>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={QuestionsGenerationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({
+            handleChange,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+            setFieldValue,
+          }) => (
+            <View style={styles.container}>
+              <Text style={[Typography.homeTitle]}>Bible Inquiries</Text>
+              <View style={{ paddingVertical: 12 }}>
                 <Text style={[Typography.bodySemibold, styles.label]}>
-                  Number of verses
+                  Ask Your Question
                 </Text>
-                <Text style={[Typography.smallRegular, styles.helperText]}>
-                  Select the number of verses you would like to research
-                </Text>
+                <CustomInput
+                  type={InputType.Text}
+                  placeholder="Type your question here..."
+                  value={values.question}
+                  onChangeText={handleChange("question")}
+                />
+                {touched.question && errors.question && (
+                  <Text style={styles.errorText}>{errors.question}</Text>
+                )}
               </View>
-              <Counter
-                value={values.verses}
-                onIncrement={() => setFieldValue("verses", values.verses + 1)}
-                onDecrement={() =>
-                  setFieldValue("verses", Math.max(values.verses - 1, 1))
-                }
-              />
-              {touched.verses && errors.verses && (
-                <Text style={styles.errorText}>{errors.verses}</Text>
-              )}
-            </View>
-            <View style={{ paddingVertical: 12 }}>
-              <Text style={[Typography.bodySemibold, styles.label]}>
-                Preferred Bible
-              </Text>
-              <CustomSelect
-                options={["NIV", "KJV", "ESV"]}
-                value={values.preferredBible}
-                onValueChange={(value) =>
-                  setFieldValue("preferredBible", value)
-                }
-                placeholder="Select preferred Bible"
-              />
-              {touched.preferredBible && errors.preferredBible && (
-                <Text style={styles.errorText}>{errors.preferredBible}</Text>
-              )}
-            </View>
-            <View>
-              <Text style={[Typography.bodySemibold, styles.label]}>
-                Level of complexity
-              </Text>
-              <CustomSelect
-                options={[
-                  "Kids",
-                  "Teen",
-                  "Family",
-                  "New to Faith",
-                  "Study",
-                  "Deep Dive",
-                ]}
-                value={values.complexity}
-                onValueChange={(value) => setFieldValue("complexity", value)}
-                placeholder="Select level"
-              />
-              {touched.complexity && errors.complexity && (
-                <Text style={styles.errorText}>{errors.complexity}</Text>
-              )}
-            </View>
 
-            <TouchableOpacity
-              onPress={() => handleSubmit()}
-              style={styles.submitButton}
-              disabled={isLoading}
-            >
-              <Text style={[Typography.bodyMedium, styles.submitButtonText]}>
-                + Submit
-              </Text>
-              {isLoading && (
-                <View style={styles.loader}>
-                  <ActivityIndicator color={"white"} />
+              <View style={styles.versesWrapper}>
+                <View style={{ flex: 1 }}>
+                  <Text style={[Typography.bodySemibold, styles.label]}>
+                    Number of verses
+                  </Text>
+                  <Text style={[Typography.smallRegular, styles.helperText]}>
+                    Select the number of verses you would like to research
+                  </Text>
                 </View>
-              )}
-            </TouchableOpacity>
-            {error && <Text style={styles.errorText}>{error}</Text>}
+                <Counter
+                  value={values.verses}
+                  onIncrement={() => setFieldValue("verses", values.verses + 1)}
+                  onDecrement={() =>
+                    setFieldValue("verses", Math.max(values.verses - 1, 1))
+                  }
+                />
+                {touched.verses && errors.verses && (
+                  <Text style={styles.errorText}>{errors.verses}</Text>
+                )}
+              </View>
+              <View style={{ paddingVertical: 12 }}>
+                <Text style={[Typography.bodySemibold, styles.label]}>
+                  Preferred Bible
+                </Text>
+                <CustomSelect
+                  options={["NIV", "KJV", "ESV"]}
+                  value={values.preferredBible}
+                  onValueChange={(value) =>
+                    setFieldValue("preferredBible", value)
+                  }
+                  placeholder="Select preferred Bible"
+                />
+                {touched.preferredBible && errors.preferredBible && (
+                  <Text style={styles.errorText}>{errors.preferredBible}</Text>
+                )}
+              </View>
+              <View>
+                <Text style={[Typography.bodySemibold, styles.label]}>
+                  Level of complexity
+                </Text>
+                <CustomSelect
+                  options={[
+                    "Kids",
+                    "Teen",
+                    "Family",
+                    "New to Faith",
+                    "Study",
+                    "Deep Dive",
+                  ]}
+                  value={values.complexity}
+                  onValueChange={(value) => setFieldValue("complexity", value)}
+                  placeholder="Select level"
+                />
+                {touched.complexity && errors.complexity && (
+                  <Text style={styles.errorText}>{errors.complexity}</Text>
+                )}
+              </View>
 
-            <View style={styles.historyContainer}>
-              <HistoryList
-                items={questions?.length ? questions : []}
-                isLoading={loadingQuestions}
-                historyType={HistoryType.QUESTION}
-                shouldDisabledItem={isLoading}
-                loadSessions={loadQuestions}
-                // returnToFullHistory={true}
-              />
+              <TouchableOpacity
+                onPress={() => handleSubmit()}
+                style={styles.submitButton}
+                disabled={isLoading}
+              >
+                <Text style={[Typography.bodyMedium, styles.submitButtonText]}>
+                  + Submit
+                </Text>
+                {isLoading && (
+                  <View style={styles.loader}>
+                    <ActivityIndicator color={"white"} />
+                  </View>
+                )}
+              </TouchableOpacity>
+              {error && <Text style={styles.errorText}>{error}</Text>}
+
+              <View style={styles.historyContainer}>
+                <HistoryList
+                  items={questions?.length ? questions : []}
+                  isLoading={loadingQuestions}
+                  historyType={HistoryType.QUESTION}
+                  shouldDisabledItem={isLoading}
+                  loadSessions={loadQuestions}
+                  // returnToFullHistory={true}
+                />
+              </View>
             </View>
-          </View>
-        )}
-      </Formik>
-    </ScreenWrapper>
+          )}
+        </Formik>
+      </ScreenWrapper>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    backgroundColor: "white",
+    flex: 1,
+  },
   container: {
     width: "100%",
     paddingHorizontal: 20,

@@ -106,11 +106,13 @@ const SessionForm: React.FC = () => {
         messages: [
           {
             role: "system",
-            content: "You are a helpful assistant for Bible study sessions.",
+            content:
+              "You are a helpful assistant for Bible study sessions aimed at helping people explore and learn more about the Bible.",
           },
           {
             role: "user",
-            content: `Generate ${values.numberOfQuestions} questions based on the topic: ${values.focusTopic} and provide ${values.verses} Bible verses as answers. Use the ${values.preferredBible} version and set complexity to ${values.complexity}.`,
+            // content: `Generate ${values.numberOfQuestions} questions based on the topic: ${values.focusTopic} and provide ${values.verses} Bible verses as answers. Use the ${values.preferredBible} version and set complexity to ${values.complexity}.`,
+            content: `Generate ${values.numberOfQuestions} questions based on the topic: ${values.focusTopic} and provide ${values.verses} Bible verses/range of verses as answers. Use the ${values.preferredBible} version and set complexity to ${values.complexity}.`,
           },
         ],
         sessionInfo: {

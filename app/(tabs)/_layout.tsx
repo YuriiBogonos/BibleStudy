@@ -20,8 +20,12 @@ export default function TabLayout() {
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: Colors["light"].tint,
+        // tabBarActiveTintColor: Colors["light"].tint,
         headerShown: useClientOnlyValue(false, true),
+        tabBarStyle: {
+          backgroundColor: "white",
+          borderTopColor: "#ddd",
+        },
       }}
     >
       <Tab.Screen

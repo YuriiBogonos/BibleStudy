@@ -14,7 +14,6 @@ interface CustomHeaderProps {
 
 const CustomHeader: React.FC<CustomHeaderProps> = ({ screenTitle, path }) => {
   const navigation = useNavigation<any>();
-  // const router = useRouter();
 
   return (
     <SafeAreaView style={styles.containerStyle}>
@@ -39,15 +38,21 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   titleBlock: {
-    width: "95%",
+    width: "90%",
+    height: 30,
+    justifyContent: "center",
+    alignItems: "center",
   },
   titleText: {
     textAlign: "center",
     fontSize: 24,
   },
   iconBlock: {
-    width: "5%",
-    marginTop: 6,
+    width: "10%",
+    height: 30,
+
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
