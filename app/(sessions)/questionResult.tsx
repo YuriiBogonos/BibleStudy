@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   SafeAreaView,
+  Platform,
 } from "react-native";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 
@@ -55,7 +56,9 @@ const VerseResults = () => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView
+      style={[styles.safeArea, Platform.OS === "android" && { paddingTop: 40 }]}
+    >
       <View style={styles.container}>
         <CustomHeader screenTitle={"Active Session"} />
         <View style={styles.questionHeader}>

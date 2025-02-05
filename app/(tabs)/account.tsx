@@ -79,68 +79,74 @@ export default function Account() {
   };
 
   return (
-    // <SafeAreaView style={{ flex: 1 }}>
-    <ScreenWrapper>
-      <View style={styles.container}>
-        <Text style={Typography.h1}>User</Text>
-        <SettingsItem
-          icon={<AccountSettingsIcon />}
-          text="Account Settings"
-          onPress={() =>
-            navigation.navigate("(history)", {
-              screen: "accountSettings",
-            })
-          }
+    <View style={styles.wrapper}>
+      <ScreenWrapper>
+        <View style={styles.container}>
+          <Text style={Typography.h1}>User</Text>
+          <SettingsItem
+            icon={<AccountSettingsIcon />}
+            text="Account Settings"
+            onPress={() =>
+              navigation.navigate("(history)", {
+                screen: "accountSettings",
+              })
+            }
+          />
+          <SettingsItem
+            icon={<AccountSettingsAboutIcon />}
+            text="About us"
+            onPress={() =>
+              navigation.navigate("(history)", {
+                screen: "aboutUsPage",
+              })
+            }
+          />
+          <SettingsItem
+            icon={<AccountSettingSupportIcon />}
+            text="Support us"
+            onPress={() => openLink(donationLink)}
+          />
+          <SettingsItem
+            icon={<AccountSettingsWebsiteIcon />}
+            text="Website"
+            onPress={() => openLink(websiteLink)}
+          />
+          <TouchableOpacity
+            style={styles.signOutButton}
+            onPress={handleSignOutClick}
+          >
+            <AccountSettingsSignOutIcon />
+            <Text style={styles.signOutText}>Sign out</Text>
+          </TouchableOpacity>
+          {/* <CustomButton text={"Donate"} onPress={() => console.log("Donate")} /> */}
+        </View>
+        <CustomModal
+          visible={modalVisible}
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmSignOut}
+          message="Are you sure you want to log out now?"
+          confirmText="Confirm"
+          cancelText="Cancel"
+          showWarning={false}
+          icon={<SignOutIcon />}
         />
-        <SettingsItem
-          icon={<AccountSettingsAboutIcon />}
-          text="About us"
-          onPress={() =>
-            navigation.navigate("(history)", {
-              screen: "aboutUsPage",
-            })
-          }
-        />
-        <SettingsItem
-          icon={<AccountSettingSupportIcon />}
-          text="Support us"
-          onPress={() => openLink(donationLink)}
-        />
-        <SettingsItem
-          icon={<AccountSettingsWebsiteIcon />}
-          text="Website"
-          onPress={() => openLink(websiteLink)}
-        />
-        <TouchableOpacity
-          style={styles.signOutButton}
-          onPress={handleSignOutClick}
-        >
-          <AccountSettingsSignOutIcon />
-          <Text style={styles.signOutText}>Sign out</Text>
-        </TouchableOpacity>
-        {/* <CustomButton text={"Donate"} onPress={() => console.log("Donate")} /> */}
-      </View>
-      <CustomModal
-        visible={modalVisible}
-        onClose={handleCloseModal}
-        onConfirm={handleConfirmSignOut}
-        message="Are you sure you want to log out now?"
-        confirmText="Confirm"
-        cancelText="Cancel"
-        showWarning={false}
-        icon={<SignOutIcon />}
-      />
 
-      {/* </SafeAreaView> */}
-    </ScreenWrapper>
+        {/* </SafeAreaView> */}
+      </ScreenWrapper>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    backgroundColor: "white",
+    flex: 1,
+  },
   container: {
     width: "100%",
     height: "100%",
     paddingHorizontal: 20,
+    backgroundColor: "white",
   },
   signOutButton: {
     flexDirection: "row",

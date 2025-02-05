@@ -85,40 +85,46 @@ export default function MainScreen() {
   };
 
   return (
-    <ScreenWrapper>
-      <View style={[[styles.container]]}>
-        <Text style={Typography.homeTitle}>
-          {`God Bless You, ${
-            user?.displayName
-              ? user?.displayName
-              : user?.email
-              ? getUsernameFromEmail(user?.email)
-              : "Guest"
-          }!`}
-        </Text>
-        <VerseOfWeek />
-        <CustomButton
-          onPress={handleNewSession}
-          Icon={PlusIconButton}
-          text="Start new session"
-        />
-
-        <View style={styles.sessionHistory}>
-          <HistoryList
-            items={sessions?.length ? sessions : []}
-            isLoading={isLoading}
-            error={error}
-            historyType={HistoryType.SESSION}
-            shouldDisabledItem={isLoading}
-            loadSessions={loadSessions}
+    <View style={styles.wrapper}>
+      <ScreenWrapper>
+        <View style={[[styles.container]]}>
+          <Text style={Typography.homeTitle}>
+            {`God Bless You, ${
+              user?.displayName
+                ? user?.displayName
+                : user?.email
+                ? getUsernameFromEmail(user?.email)
+                : "Guest"
+            }!`}
+          </Text>
+          <VerseOfWeek />
+          <CustomButton
+            onPress={handleNewSession}
+            Icon={PlusIconButton}
+            text="Start new session"
           />
+
+          <View style={styles.sessionHistory}>
+            <HistoryList
+              items={sessions?.length ? sessions : []}
+              isLoading={isLoading}
+              error={error}
+              historyType={HistoryType.SESSION}
+              shouldDisabledItem={isLoading}
+              loadSessions={loadSessions}
+            />
+          </View>
         </View>
-      </View>
-    </ScreenWrapper>
+      </ScreenWrapper>
+    </View>
   );
 }
 
 export const styles = StyleSheet.create({
+  wrapper: {
+    backgroundColor: "white",
+    flex: 1,
+  },
   container: {
     width: "100%",
     paddingHorizontal: 20,
