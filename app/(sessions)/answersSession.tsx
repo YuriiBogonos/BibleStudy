@@ -65,6 +65,9 @@ export default function AnswersSession() {
   });
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+  const [openGuidance, setOpenGuidance] = useState<boolean>(true);
+
   const scrollViewRef = useRef<ScrollView>(null); // Ref for the ScrollView
 
   const questions: Question[] = parsedSessionData?.questions || [];
@@ -201,6 +204,33 @@ export default function AnswersSession() {
           )}
         </ScrollView>
 
+        {questions[currentIndex].guidance && (
+          <TouchableOpacity
+            style={[styles.itemContainer, { marginVertical: 10 }]}
+            onPress={() => setOpenGuidance(!openGuidance)}
+          >
+            <View style={styles.verseHeader}>
+              <View>
+                <Text style={[Typography.smallBold, styles.versesNumber]}>
+                  Guidance
+                </Text>
+              </View>
+              <View>
+                <AntDesign
+                  name={openGuidance ? "up" : "down"}
+                  size={14}
+                  color={Colors.DarkBlue}
+                />
+              </View>
+            </View>
+            <Text>
+              {openGuidance
+                ? `${questions[currentIndex].guidance.slice(0, 80)}...`
+                : questions[currentIndex].guidance}
+            </Text>
+          </TouchableOpacity>
+        )}
+
         <SessionNavigation
           isMultipleQuestions={questions.length > 1}
           currentQuestionIndex={currentIndex}
@@ -302,6 +332,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 10,
+    width: "100%",
   },
   scrollViewContent: {
     paddingBottom: 20,

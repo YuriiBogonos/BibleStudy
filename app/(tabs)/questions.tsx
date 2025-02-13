@@ -38,6 +38,7 @@ import { setQuestions } from "@/store/slices/historySlice";
 import { HistoryType } from "@/components/ui/HistoryList/types";
 import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "expo-router";
+import { AnswerResponse } from "@/api/openaiApi";
 
 export default function Questions() {
   const dispatch = useDispatch();
@@ -52,8 +53,6 @@ export default function Questions() {
 
   const [loadingQuestions, setLoadingQuestions] = useState<boolean>(false);
   const [questionsError, setQuestionsError] = useState<string>("");
-
-  // const [questionsList, setQuestionsList] = useState<any>([]);
 
   const initialValues: IQuestionsFormValues = {
     question: "",
@@ -86,18 +85,18 @@ export default function Questions() {
         max_tokens: 300,
       });
 
-      console.log("API Response on Question: ====>", result);
-
       if ("data" in result && result.data && "verses" in result.data) {
         const verses = result.data.verses || [];
         const serializedVersesData = JSON.stringify(verses);
-        console.log("Serialized verses data:", serializedVersesData);
+
+        const guidance = result.data.guidance || "";
 
         const questionsData: IQuestionNavigationData = {
           verses: serializedVersesData,
           question: values.question,
           preferredBible: values.preferredBible,
           complexity: values.complexity,
+          guidance,
         };
 
         const questionsDataFirebase: IQuestionsData = {
@@ -105,6 +104,7 @@ export default function Questions() {
           question: values.question,
           preferredBible: values.preferredBible,
           complexity: values.complexity,
+          guidance,
         };
 
         await createQuestion(

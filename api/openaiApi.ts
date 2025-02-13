@@ -2,6 +2,8 @@ import OpenAI from "openai";
 import { BaseQueryFn } from "@reduxjs/toolkit/query";
 import { FetchBaseQueryError } from "@reduxjs/toolkit/query/react";
 import { generateQuestions } from "@/types/User";
+import { GenerateGuidancePayload } from "./baseQuery";
+import { IAnswerResponse, IVerses } from "@/types/QuestionsTypes";
 
 export type Role = "user" | "system" | "assistant";
 export type FinishReason =
@@ -62,11 +64,12 @@ export interface BibleVerse {
 export interface Question {
   content: string;
   bible_verse: BibleVerse[];
+  guidance: string;
 }
 
 export interface AnswerResponse {
-  answer: string;
-  verses: BibleVerse[];
+  guidance: string;
+  verses: IVerses[];
 }
 
 interface SessionCompletion {
@@ -120,6 +123,47 @@ const handleError = (error: unknown): FetchBaseQueryError => {
 };
 
 // Промти
+// export const questionGenerationPrompt = (
+//   sessionInfo: GenerateSessionPayload["sessionInfo"]
+// ) => `
+// You are an experienced Christian pastor. Please provide exactly ${
+//   sessionInfo.numberOfQuestions
+// } study questions about ${sessionInfo.focusTopics} that are appropriate for a ${
+//   sessionInfo.complexity
+// } level Bible study.
+
+// Each question should include exactly ${
+//   sessionInfo.numberOfVerses
+// } relevant Bible verses.
+
+// Please format the response as valid JSON without any extra text. The JSON should look like this:
+// {
+//   "questions": [
+//     {
+//       "content": "Question text",
+//       "bible_verse": [
+//         {
+//           "book": "Book name",
+//           "chapter": 1,
+//           "verses": "Verse numbers",
+//           "full_verse": "Full text of the verse"
+//         }
+//         ${
+//           sessionInfo.numberOfVerses > 1
+//             ? `, {
+//           "book": "Book name 2",
+//           "chapter": 2,
+//           "verses": "Verse numbers",
+//           "full_verse": "Full text of the verse"
+//         }`
+//             : ""
+//         }
+//       ]
+//     }
+//   ]
+// }
+// `;
+
 export const questionGenerationPrompt = (
   sessionInfo: GenerateSessionPayload["sessionInfo"]
 ) => `
@@ -131,7 +175,12 @@ You are an experienced Christian pastor. Please provide exactly ${
 
 Each question should include exactly ${
   sessionInfo.numberOfVerses
-} relevant Bible verses. 
+} relevant Bible verses.
+
+For each question, also provide a **guidance** message to help a Christian of this level (${
+  sessionInfo.complexity
+}) understand how these verses relate to the question. 
+⚠️ Do not provide personal interpretations—only guidance on how these verses help us understand what the Bible says.
 
 Please format the response as valid JSON without any extra text. The JSON should look like this:
 {
@@ -155,11 +204,97 @@ Please format the response as valid JSON without any extra text. The JSON should
         }`
             : ""
         }
-      ]
+      ],
+      "guidance": "Short guidance message explaining how these verses relate to the question."
     }
   ]
 }
 `;
+
+// export const questionGenerationPrompt = (
+//   sessionInfo: GenerateSessionPayload["sessionInfo"]
+// ) => `
+// You are an experienced Christian pastor. Please provide exactly ${
+//   sessionInfo.numberOfQuestions
+// } study questions about **${
+//   sessionInfo.focusTopics
+// }** that are appropriate for a **${sessionInfo.complexity}** level Bible study.
+
+// Each question should include exactly **${
+//   sessionInfo.numberOfVerses
+// }** relevant Bible verses.
+
+// Once the questions are generated, for each question, provide a **short guidance message** to help a Christian of this level: **${
+//   sessionInfo.complexity
+// }** understand what the Bible says about the topic.
+
+// Do **not** interpret or provide your own answer. Simply offer Christian guidance on how these verses help us understand what the Bible teaches about the topic.
+
+// ---
+
+// ### 🔹 **Response Format:**
+// Please format the response as **valid JSON** without any extra text. The JSON should look like this:
+
+// \`\`\`json
+// {
+//   "questions": [
+//     {
+//       "content": "Question text",
+//       "bible_verse": [
+//         {
+//           "book": "Book name",
+//           "chapter": 1,
+//           "verses": "Verse numbers",
+//           "full_verse": "Full text of the verse"
+//         }
+//         ${
+//           sessionInfo.numberOfVerses > 1
+//             ? `, {
+//           "book": "Book name 2",
+//           "chapter": 2,
+//           "verses": "Verse numbers",
+//           "full_verse": "Full text of the verse"
+//         }`
+//             : ""
+//         }
+//       ],
+//       "guidance": "A short guidance message that explains how these verses help us understand what the Bible says about the topic."
+//     }
+//   ]
+// }
+// \`\`\`
+// `;
+
+// const answerPrompt = (
+//   question: string,
+//   verses: number,
+//   preferredBible: string,
+//   complexity: string
+// ) => `
+// You are an experienced Christian pastor. Please provide exactly ${verses} relevant Bible verses from the ${preferredBible} to answer the question: "${question}".
+
+// Format the response as valid JSON without any extra text. The JSON should look like this:
+// {
+//   "verses": [
+//     {
+//       "book": "Book name",
+//       "chapter": 1,
+//       "verses": "Verse numbers",
+//       "full_verse": "Full text of the verse"
+//     }
+//     ${
+//       verses > 1
+//         ? `, {
+//       "book": "Book name 2",
+//       "chapter": 2,
+//       "verses": "Verse numbers",
+//       "full_verse": "Full text of the verse"
+//     }`
+//         : ""
+//     }
+//   ]
+// }
+// `;
 
 const answerPrompt = (
   question: string,
@@ -169,7 +304,16 @@ const answerPrompt = (
 ) => `
 You are an experienced Christian pastor. Please provide exactly ${verses} relevant Bible verses from the ${preferredBible} to answer the question: "${question}". 
 
-Format the response as valid JSON without any extra text. The JSON should look like this:
+After selecting the Bible verses, provide a **short guidance message** to help a Christian of this level: **${complexity}** understand how these verses answer the question.  
+
+Do **not** interpret or provide your own answer. Simply offer Christian guidance on how these verses help us understand what the Bible teaches about the topic.
+
+---
+
+### 🔹 **Response Format:**  
+Please format the response as **valid JSON** without any extra text. The JSON should look like this:
+
+\`\`\`json
 {
   "verses": [
     {
@@ -188,8 +332,32 @@ Format the response as valid JSON without any extra text. The JSON should look l
     }`
         : ""
     }
-  ]
+  ],
+  "guidance": "A short guidance message that explains how these verses help us understand what the Bible says about the topic."
 }
+\`\`\`
+`;
+
+const guidancePrompt = (
+  question: string,
+  bibleVerses: string,
+  complexity: string
+) => `
+You are an experienced Christian pastor. Given the following question and related Bible verses, provide a **short guidance message** to help a Christian of this level: **${complexity}** understand what the Bible says about the topic.
+
+**Question:** "${question}"  
+**Related Bible Verses:**  
+${bibleVerses}  
+
+Do **not** interpret or provide your own answer. Simply offer Christian guidance on how these verses help us understand what the Bible teaches about this topic.
+
+Format the response as **valid JSON** without extra text. The JSON should look like this:  
+
+\`\`\`json
+{
+  "guidance": "Your short guidance message here."
+}
+\`\`\`
 `;
 
 // Генерація відповіді на питання
@@ -245,6 +413,27 @@ const generateAnswer = async (
   console.log("Failed to generate answer");
 
   throw new Error("Failed to generate answer");
+};
+
+export const generateGuidance = async (
+  model: string,
+  messages: Message[],
+  maxTokens: number = 4000,
+  questions: string,
+  bibleVerses: string,
+  complexity: string
+) => {
+  const response = await createChatCompletion({
+    model,
+    messages: [
+      ...messages,
+      {
+        role: "user",
+        content: guidancePrompt(questions, bibleVerses, complexity),
+      },
+    ],
+    max_tokens: maxTokens,
+  });
 };
 
 // const generateAnswer = async (
@@ -303,8 +492,6 @@ const openAiBaseQuery: BaseQueryFn<
   FetchBaseQueryError
 > = async (payload) => {
   try {
-    console.log("Base query payload:", payload);
-
     if ("sessionInfo" in payload) {
       console.log("Generating session...");
 
@@ -346,9 +533,7 @@ const openAiBaseQuery: BaseQueryFn<
       model
     );
 
-    console.log("answerResponse ====>", answerResponse);
-
-    return { data: answerResponse };
+    return { data: answerResponse as AnswerResponse };
   } catch (error) {
     console.error("Error in openAiBaseQuery:", error);
     return { error: handleError(error) };

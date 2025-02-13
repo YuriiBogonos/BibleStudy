@@ -1,5 +1,10 @@
-import { createApi } from '@reduxjs/toolkit/query/react';
-import openAiBaseQuery, { FinishReason, Question, Role } from '@/api/openaiApi';
+import { createApi } from "@reduxjs/toolkit/query/react";
+import openAiBaseQuery, {
+  AnswerResponse,
+  FinishReason,
+  Question,
+  Role,
+} from "@/api/openaiApi";
 
 interface Message {
   role: Role;
@@ -22,10 +27,14 @@ export interface GenerateSessionPayload extends GenerateResponsePayload {
   };
 }
 
+export interface GenerateGuidancePayload extends GenerateResponsePayload {
+  questions: string;
+}
+
 interface ChatCompletionChoice {
   index: number;
   message: {
-    role: 'assistant';
+    role: "assistant";
     content: string | null;
   };
   finish_reason: FinishReason;
@@ -54,11 +63,16 @@ interface SessionCompletion {
   answers: string[];
 }
 
+interface GuidanceCompletion {
+  id: string;
+  guidanceText: string;
+}
+
 export const openAiApi = createApi({
-  reducerPath: 'openAiApi',
+  reducerPath: "openAiApi",
   baseQuery: openAiBaseQuery,
   endpoints: (builder) => ({
-    generateResponse: builder.mutation<ChatCompletion, GenerateResponsePayload>(
+    generateResponse: builder.mutation<AnswerResponse, GenerateResponsePayload>(
       {
         query: (payload) => payload,
       }

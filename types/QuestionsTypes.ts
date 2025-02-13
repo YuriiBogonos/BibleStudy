@@ -21,6 +21,7 @@ export interface IQuestionNavigationData {
   question: string;
   preferredBible: string;
   complexity: string;
+  guidance: string;
 }
 
 export interface IFirestoreQuestion extends IQuestionsData {
@@ -28,4 +29,9 @@ export interface IFirestoreQuestion extends IQuestionsData {
   updatedAt: number;
   id: string;
   userId: string;
+}
+
+export interface IAnswerResponse {
+  guidance: string;
+  verses: IVerses[];
 }
