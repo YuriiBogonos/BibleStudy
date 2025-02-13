@@ -35,7 +35,12 @@ const CrossLoadingIcon = ({ isAppLoaded }: { isAppLoaded: boolean }) => {
 
   return (
     <View
-      style={{ height: "100%", justifyContent: "center", alignItems: "center" }}
+      style={{
+        height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "white",
+      }}
     >
       <Svg width={116} height={153} viewBox="0 0 124 161" fill="none">
         <AnimatedPath

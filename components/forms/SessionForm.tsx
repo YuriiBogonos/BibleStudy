@@ -111,7 +111,6 @@ const SessionForm: React.FC = () => {
           },
           {
             role: "user",
-            // content: `Generate ${values.numberOfQuestions} questions based on the topic: ${values.focusTopic} and provide ${values.verses} Bible verses as answers. Use the ${values.preferredBible} version and set complexity to ${values.complexity}.`,
             content: `Generate ${values.numberOfQuestions} questions based on the topic: ${values.focusTopic} and provide ${values.verses} Bible verses/range of verses as answers. Use the ${values.preferredBible} version and set complexity to ${values.complexity}.`,
           },
         ],

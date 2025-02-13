@@ -1,6 +1,12 @@
 import React from "react";
 import { Header } from "@rneui/themed";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import { Colors } from "@/types/Colors";
@@ -17,14 +23,9 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({ screenTitle, path }) => {
 
   return (
     <SafeAreaView style={styles.containerStyle}>
-      <View style={styles.iconBlock}>
-        <AntDesign
-          name="left"
-          size={20}
-          color={Colors.DarkBlue}
-          onPress={navigation.goBack}
-        />
-      </View>
+      <TouchableOpacity style={styles.iconBlock} onPress={navigation.goBack}>
+        <AntDesign name="left" size={20} color={Colors.DarkBlue} />
+      </TouchableOpacity>
       <View style={styles.titleBlock}>
         <Text style={styles.titleText}>{screenTitle}</Text>
       </View>

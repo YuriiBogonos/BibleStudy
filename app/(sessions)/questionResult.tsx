@@ -32,11 +32,14 @@ const VerseResults = () => {
   const navigation = useNavigation<any>();
 
   const { params } = useRoute<QuestionsRouteProp>();
-  const { complexity, preferredBible, question, verses } = params.questionsData;
+  const { complexity, preferredBible, question, verses, guidance } =
+    params.questionsData;
 
   const [expandedVerses, setExpandedVerses] = useState<boolean[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+  const [openGuidance, setOpenGuidance] = useState<boolean>(true);
 
   const parsedVerses: any[] = Array.isArray(verses)
     ? JSON.parse(verses[0])
@@ -114,6 +117,32 @@ const VerseResults = () => {
             </TouchableOpacity>
           ))}
         </ScrollView>
+
+        {guidance && (
+          <TouchableOpacity
+            style={[styles.questionHeader, { marginVertical: 10 }]}
+            onPress={() => setOpenGuidance(!openGuidance)}
+          >
+            <View style={styles.verseHeader}>
+              <View>
+                <Text style={[Typography.smallBold, styles.verseReference]}>
+                  Guidance
+                </Text>
+              </View>
+              <View>
+                <AntDesign
+                  name={openGuidance ? "up" : "down"}
+                  size={14}
+                  color={Colors.DarkBlue}
+                />
+              </View>
+            </View>
+            <Text>
+              {openGuidance ? `${guidance.slice(0, 80)}...` : guidance}
+            </Text>
+          </TouchableOpacity>
+        )}
+
         <SessionNavigation
           isMultipleQuestions={false}
           currentQuestionIndex={0}
