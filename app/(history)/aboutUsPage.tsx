@@ -51,10 +51,8 @@ const AboutUsPage = () => {
             This app is still a work in progress, and we’re constantly working
             to improve it. If you have any thoughts, suggestions, or feedback,
             we’d love to hear from you! Please reach out to us at{" "}
-            <Text style={Typography.ModalTitle}>
-              feedback@biblebuddyAI.com.au{" "}
-            </Text>
-            — your input means so much to us.
+            <Text style={Typography.ModalTitle}>ozgeeom@gmail.com </Text>— your
+            input means so much to us.
           </Text>
           <Text style={[Typography.verseText, styles.textTopMargin]}>
             Thank you for joining us on this journey. Together, let’s bring more
